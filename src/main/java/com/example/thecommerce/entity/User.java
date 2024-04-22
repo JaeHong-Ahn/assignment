@@ -1,6 +1,6 @@
 package com.example.thecommerce.entity;
 
-import com.example.thecommerce.dto.RegisterRequestDto;
+import com.example.thecommerce.dto.UserRegisterForm;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 @Builder
 @Getter
+@Setter
 @Component
 @DynamicUpdate
 public class User extends BaseTimeEntity{
@@ -40,14 +41,14 @@ public class User extends BaseTimeEntity{
     private String email;
 
     //password -> BcryptEncoder
-    public static User toUser(RegisterRequestDto registerRequestDto) {
+    public static User toUser(UserRegisterForm userRegisterForm) {
         return User.builder()
-                .identifier(registerRequestDto.getIdentifier())
-                .password(registerRequestDto.getPassword())
-                .nickname(registerRequestDto.getNickname())
-                .name(registerRequestDto.getName())
-                .phoneNum(registerRequestDto.getPhoneNum())
-                .email(registerRequestDto.getEmail())
+                .identifier(userRegisterForm.getIdentifier())
+                .password(userRegisterForm.getPassword())
+                .nickname(userRegisterForm.getNickname())
+                .name(userRegisterForm.getName())
+                .phoneNum(userRegisterForm.getPhoneNum())
+                .email(userRegisterForm.getEmail())
                 .build();
     }
 }

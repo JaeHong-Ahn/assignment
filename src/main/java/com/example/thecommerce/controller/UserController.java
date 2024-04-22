@@ -1,11 +1,15 @@
 package com.example.thecommerce.controller;
 
-import com.example.thecommerce.dto.RegisterRequestDto;
+import com.example.thecommerce.dto.UserRegisterForm;
+import com.example.thecommerce.dto.UserUpdateForm;
+import com.example.thecommerce.entity.User;
 import com.example.thecommerce.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,16 +29,36 @@ public class UserController {
      */
 
     //회원 가입
-    public String register(@Validated @RequestBody RegisterRequestDto registerRequestDto,
+    @PostMapping("/join")
+    public String register(@Validated @RequestBody UserRegisterForm userRegisterForm,
                            BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()){
             return null;
         }
 
-        userService.createUser(registerRequestDto);
+        userService.createUser(userRegisterForm);
 
         return null;
-
     }
+
+    //회원 목록 조회
+    @GetMapping("/list")
+    public List<User> getUserList(){
+        return userService.findAllUsers();
+    }
+
+    //회원 정보 수정
+    @PostMapping("/{identifier}")
+    public String update(@Validated @RequestBody UserUpdateForm userUpdateForm,
+                         @PathVariable String identifier,
+                         BindingResult bindingResult){
+
+        userService.updateUserInfo(identifier, userUpdateForm);
+        return null;
+    }
+
+    //회원 Identifier 수정
+
+    //회원 비밀번호 수정
 }

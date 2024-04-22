@@ -6,13 +6,7 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class RegisterRequestDto {
-
-    @NotNull
-    String identifier;
-
-    @NotNull
-    String password;
+public class UserUpdateForm {
 
     @NotNull
     String nickname;
@@ -26,10 +20,8 @@ public class RegisterRequestDto {
     @NotNull
     String email;
 
-    public RegisterRequestDto(String identifier, String password,
-                              String nickname, String name, String phoneNum, String email) {
-        this.identifier = identifier;
-        this.password = password;
+    public UserUpdateForm(String nickname, String name,
+                          String phoneNum, String email) {
         this.nickname = nickname;
         this.name = name;
         this.phoneNum = phoneNum;
