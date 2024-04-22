@@ -2,6 +2,8 @@ package com.example.thecommerce.controller;
 
 import com.example.thecommerce.dto.UserRegisterForm;
 import com.example.thecommerce.dto.UserUpdateForm;
+import com.example.thecommerce.dto.UserUpdateIdentifierForm;
+import com.example.thecommerce.dto.UserUpdatePasswordForm;
 import com.example.thecommerce.entity.User;
 import com.example.thecommerce.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -53,12 +55,37 @@ public class UserController {
     public String update(@Validated @RequestBody UserUpdateForm userUpdateForm,
                          @PathVariable String identifier,
                          BindingResult bindingResult){
+        if (bindingResult.hasErrors()){
+            return null;
+        }
 
         userService.updateUserInfo(identifier, userUpdateForm);
         return null;
     }
 
     //회원 Identifier 수정
+    @PostMapping("/{id}")
+    public String updateIdentifier(@Validated @RequestBody UserUpdateIdentifierForm userUpdateIdentifierForm,
+                         @PathVariable Long id,
+                         BindingResult bindingResult){
+        if (bindingResult.hasErrors()){
+            return null;
+        }
+
+        userService.updateUserIdentifier(id, userUpdateIdentifierForm);
+        return null;
+    }
 
     //회원 비밀번호 수정
+    @PostMapping("/{id}")
+    public String update(@Validated @RequestBody UserUpdatePasswordForm userUpdatePasswordForm,
+                         @PathVariable Long id,
+                         BindingResult bindingResult){
+        if (bindingResult.hasErrors()){
+            return null;
+        }
+
+        userService.updateUserPassword(id, userUpdatePasswordForm);
+        return null;
+    }
 }

@@ -2,6 +2,8 @@ package com.example.thecommerce.repository;
 
 import com.example.thecommerce.dto.UserRegisterForm;
 import com.example.thecommerce.dto.UserUpdateForm;
+import com.example.thecommerce.dto.UserUpdateIdentifierForm;
+import com.example.thecommerce.dto.UserUpdatePasswordForm;
 import com.example.thecommerce.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,5 +35,17 @@ public class UserRepositoryImpl implements UserRepository {
         findUser.setName(userUpdateForm.getName());
         findUser.setPhoneNum(userUpdateForm.getPhoneNum());
         findUser.setEmail(userUpdateForm.getEmail());
+    }
+
+    @Override
+    public void updateUserIdentifier(Long id, UserUpdateIdentifierForm form) {
+        User findUser = userJpaRepository.findById(id).get();
+        findUser.setIdentifier(form.getIdentifier());
+    }
+
+    @Override
+    public void updateUserPassword(Long id, UserUpdatePasswordForm form) {
+        User findUser = userJpaRepository.findById(id).get();
+        findUser.setPassword(form.getPassword());
     }
 }
