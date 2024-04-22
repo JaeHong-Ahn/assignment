@@ -39,4 +39,8 @@ public class UserService {
     public void updateUserPassword(Long id, UserUpdatePasswordForm form) {
         userRepository.updateUserPassword(id, form);
     }
+
+    public void withdrawal(Long id) {
+        userRepository.delete(id);
+    }
 }

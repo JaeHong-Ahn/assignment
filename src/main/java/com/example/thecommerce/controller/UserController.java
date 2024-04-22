@@ -64,7 +64,7 @@ public class UserController {
     }
 
     //회원 Identifier 수정
-    @PostMapping("/{id}")
+    @PostMapping("/update/identifier/{id}")
     public String updateIdentifier(@Validated @RequestBody UserUpdateIdentifierForm userUpdateIdentifierForm,
                          @PathVariable Long id,
                          BindingResult bindingResult){
@@ -77,8 +77,8 @@ public class UserController {
     }
 
     //회원 비밀번호 수정
-    @PostMapping("/{id}")
-    public String update(@Validated @RequestBody UserUpdatePasswordForm userUpdatePasswordForm,
+    @PostMapping("/update/password/{id}")
+    public String updatePassword(@Validated @RequestBody UserUpdatePasswordForm userUpdatePasswordForm,
                          @PathVariable Long id,
                          BindingResult bindingResult){
         if (bindingResult.hasErrors()){
@@ -86,6 +86,19 @@ public class UserController {
         }
 
         userService.updateUserPassword(id, userUpdatePasswordForm);
+        return null;
+    }
+
+    //회원 탈퇴
+    @PostMapping("/withdrawal/{id}")
+    public String withdrawal(@PathVariable Long id,
+                         BindingResult bindingResult){
+        if (bindingResult.hasErrors()){
+            return null;
+        }
+
+        userService.withdrawal(id);
+
         return null;
     }
 }

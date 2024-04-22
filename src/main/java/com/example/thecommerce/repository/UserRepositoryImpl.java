@@ -48,4 +48,9 @@ public class UserRepositoryImpl implements UserRepository {
         User findUser = userJpaRepository.findById(id).get();
         findUser.setPassword(form.getPassword());
     }
+
+    @Override
+    public void delete(Long id) {
+        userJpaRepository.deleteById(id);
+    }
 }

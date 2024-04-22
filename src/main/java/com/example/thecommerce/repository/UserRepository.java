@@ -19,4 +19,6 @@ public interface UserRepository {
     void updateUserIdentifier(Long id, UserUpdateIdentifierForm form);
 
     void updateUserPassword(Long id, UserUpdatePasswordForm form);
+
+    void delete(Long id);
 }
