@@ -1,9 +1,6 @@
 package com.example.thecommerce.controller;
 
-import com.example.thecommerce.dto.UserRegisterForm;
-import com.example.thecommerce.dto.UserUpdateForm;
-import com.example.thecommerce.dto.UserUpdateIdentifierForm;
-import com.example.thecommerce.dto.UserUpdatePasswordForm;
+import com.example.thecommerce.dto.*;
 import com.example.thecommerce.entity.User;
 import com.example.thecommerce.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +37,20 @@ public class UserController {
         }
 
         userService.createUser(userRegisterForm);
+
+        return null;
+    }
+
+    //로그인
+    @PostMapping("/login")
+    public String login(@Validated @RequestBody UserLoginForm form,
+                           BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()){
+            return null;
+        }
+
+        userService.login(form);
 
         return null;
     }

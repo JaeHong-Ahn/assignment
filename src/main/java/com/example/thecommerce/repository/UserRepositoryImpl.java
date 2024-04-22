@@ -1,12 +1,10 @@
 package com.example.thecommerce.repository;
 
-import com.example.thecommerce.dto.UserRegisterForm;
-import com.example.thecommerce.dto.UserUpdateForm;
-import com.example.thecommerce.dto.UserUpdateIdentifierForm;
-import com.example.thecommerce.dto.UserUpdatePasswordForm;
+import com.example.thecommerce.dto.*;
 import com.example.thecommerce.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,11 +14,12 @@ import java.util.List;
 @Slf4j
 public class UserRepositoryImpl implements UserRepository {
 
+    private PasswordEncoder passwordEncoder;
     private UserJpaRepository userJpaRepository;
 
     @Override
     public void create(UserRegisterForm userRegisterForm) {
-        userJpaRepository.save(User.toUser(userRegisterForm));
+        userJpaRepository.save(UserRegisterForm.toUser(passwordEncoder, userRegisterForm));
     }
 
     @Override
@@ -46,11 +45,22 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void updateUserPassword(Long id, UserUpdatePasswordForm form) {
         User findUser = userJpaRepository.findById(id).get();
-        findUser.setPassword(form.getPassword());
+        findUser.setPassword(passwordEncoder.encode(form.getPassword()));
     }
 
     @Override
     public void delete(Long id) {
         userJpaRepository.deleteById(id);
+    }
+
+    @Override
+    public void login(UserLoginForm form) {
+        if (userJpaRepository.existsUserByIdentifier(form.getIdentifier())){
+            if (passwordEncoder.matches(form.getPassword(), userJpaRepository.findUserByIdentifier(form.getIdentifier()).getPassword())) {
+                //success
+            }
+
+        }
+        //fail
     }
 }

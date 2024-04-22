@@ -1,9 +1,6 @@
 package com.example.thecommerce.service;
 
-import com.example.thecommerce.dto.UserRegisterForm;
-import com.example.thecommerce.dto.UserUpdateForm;
-import com.example.thecommerce.dto.UserUpdateIdentifierForm;
-import com.example.thecommerce.dto.UserUpdatePasswordForm;
+import com.example.thecommerce.dto.*;
 import com.example.thecommerce.entity.User;
 import com.example.thecommerce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,5 +39,9 @@ public class UserService {
 
     public void withdrawal(Long id) {
         userRepository.delete(id);
+    }
+
+    public void login(UserLoginForm form) {
+        userRepository.login(form);
     }
 }

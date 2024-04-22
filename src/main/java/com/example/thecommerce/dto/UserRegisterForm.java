@@ -1,8 +1,10 @@
 package com.example.thecommerce.dto;
 
+import com.example.thecommerce.entity.User;
 import com.sun.istack.internal.NotNull;
 import lombok.Getter;
 import lombok.ToString;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
 @ToString
@@ -34,5 +36,16 @@ public class UserRegisterForm {
         this.name = name;
         this.phoneNum = phoneNum;
         this.email = email;
+    }
+
+    public static User toUser(PasswordEncoder passwordEncoder, UserRegisterForm userRegisterForm) {
+        return User.builder()
+                .identifier(userRegisterForm.getIdentifier())
+                .password(passwordEncoder.encode(userRegisterForm.getPassword()))
+                .nickname(userRegisterForm.getNickname())
+                .name(userRegisterForm.getName())
+                .phoneNum(userRegisterForm.getPhoneNum())
+                .email(userRegisterForm.getEmail())
+                .build();
     }
 }
