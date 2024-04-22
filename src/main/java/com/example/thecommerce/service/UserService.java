@@ -1,5 +1,6 @@
 package com.example.thecommerce.service;
 
+import com.example.thecommerce.dto.RegisterRequestDto;
 import com.example.thecommerce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,5 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+
+    public void createUser(RegisterRequestDto registerRequestDto) {
+        userRepository.create(registerRequestDto);
+    }
 
 }
