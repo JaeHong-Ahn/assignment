@@ -1,5 +1,6 @@
 package com.example.thecommerce.entity;
 
+import com.example.thecommerce.dto.RegisterRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
@@ -29,10 +30,24 @@ public class User extends BaseTimeEntity{
     @Column(name = "nickname", nullable = false)
     private String nickname;
 
+    @Column(name = "name", nullable = false)
+    private String name;
+
     @Column(name = "phoneNum", nullable = false)
     private String phoneNum;
 
     @Column(name = "email", nullable = false)
     private String email;
 
+    //password -> BcryptEncoder
+    public static User toUser(RegisterRequestDto registerRequestDto) {
+        return User.builder()
+                .identifier(registerRequestDto.getIdentifier())
+                .password(registerRequestDto.getPassword())
+                .nickname(registerRequestDto.getNickname())
+                .name(registerRequestDto.getName())
+                .phoneNum(registerRequestDto.getPhoneNum())
+                .email(registerRequestDto.getEmail())
+                .build();
+    }
 }
