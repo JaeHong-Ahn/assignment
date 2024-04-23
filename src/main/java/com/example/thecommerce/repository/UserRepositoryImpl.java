@@ -32,18 +32,21 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void updateUserInfo(String identifier, UserUpdateForm userUpdateForm) {
+    public UserUpdateResponseDto updateUserInfo(String identifier, UserUpdateForm userUpdateForm) {
         User findUser = userJpaRepository.findUserByIdentifier(identifier);
         findUser.setNickname(userUpdateForm.getNickname());
         findUser.setName(userUpdateForm.getName());
         findUser.setPhoneNum(userUpdateForm.getPhoneNum());
         findUser.setEmail(userUpdateForm.getEmail());
+
+        return UserUpdateResponseDto.toDto(findUser);
     }
 
     @Override
-    public void updateUserIdentifier(Long id, UserUpdateIdentifierForm form) {
+    public UserUpdateIdentifierResponseDto updateUserIdentifier(Long id, UserUpdateIdentifierForm form) {
         User findUser = userJpaRepository.findById(id).get();
         findUser.setIdentifier(form.getIdentifier());
+        return UserUpdateIdentifierResponseDto.toDto(findUser);
     }
 
     @Override

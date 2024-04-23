@@ -28,13 +28,13 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUserInfo(String identifier, UserUpdateForm form) {
-        userRepository.updateUserInfo(identifier, form);
+    public UserUpdateResponseDto updateUserInfo(String identifier, UserUpdateForm form) {
+        return userRepository.updateUserInfo(identifier, form);
     }
 
     @Transactional
-    public void updateUserIdentifier(Long id, UserUpdateIdentifierForm form) {
-        userRepository.updateUserIdentifier(id, form);
+    public UserUpdateIdentifierResponseDto updateUserIdentifier(Long id, UserUpdateIdentifierForm form) {
+        return userRepository.updateUserIdentifier(id, form);
     }
 
     @Transactional

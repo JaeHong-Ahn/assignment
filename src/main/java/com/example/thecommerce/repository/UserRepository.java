@@ -12,9 +12,9 @@ public interface UserRepository {
 
     List<User> findAllUsers();
 
-    void updateUserInfo(String identifier, UserUpdateForm userUpdateForm);
+    UserUpdateResponseDto updateUserInfo(String identifier, UserUpdateForm userUpdateForm);
 
-    void updateUserIdentifier(Long id, UserUpdateIdentifierForm form);
+    UserUpdateIdentifierResponseDto updateUserIdentifier(Long id, UserUpdateIdentifierForm form);
 
     void updateUserPassword(Long id, UserUpdatePasswordForm form);
 
