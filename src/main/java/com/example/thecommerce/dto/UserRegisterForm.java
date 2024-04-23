@@ -3,11 +3,13 @@ package com.example.thecommerce.dto;
 import com.example.thecommerce.entity.User;
 import com.sun.istack.internal.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
 @ToString
+@NoArgsConstructor
 public class UserRegisterForm {
 
     @NotNull

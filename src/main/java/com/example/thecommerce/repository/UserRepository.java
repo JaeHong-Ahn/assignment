@@ -4,6 +4,7 @@ import com.example.thecommerce.dto.*;
 import com.example.thecommerce.entity.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository {
 
@@ -20,4 +21,10 @@ public interface UserRepository {
     void delete(Long id);
 
     void login(UserLoginForm form);
+
+    Optional<User> findByLoginId(String identifier);
+
+    User findUserById(Long id);
+
+    User findByIdentifier(String identifier);
 }

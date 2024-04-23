@@ -7,19 +7,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
 @Slf4j
 public class UserRepositoryImpl implements UserRepository {
 
-    private PasswordEncoder passwordEncoder;
-    private UserJpaRepository userJpaRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final UserJpaRepository userJpaRepository;
 
     @Override
     public void create(UserRegisterForm userRegisterForm) {
         userJpaRepository.save(UserRegisterForm.toUser(passwordEncoder, userRegisterForm));
+        System.out.println(userRegisterForm.getNickname());
     }
 
     @Override
@@ -50,6 +54,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void delete(Long id) {
+//        userJpaRepository.deleteUserById(id);
         userJpaRepository.deleteById(id);
     }
 
@@ -62,5 +67,21 @@ public class UserRepositoryImpl implements UserRepository {
 
         }
         //fail
+    }
+    @Override
+    public Optional<User> findByLoginId(String identifier){
+        return userJpaRepository.findAll().stream()
+                .filter(m -> m.getIdentifier().equals(identifier))
+                .findFirst();
+    }
+
+    @Override
+    public User findUserById(Long id) {
+        return userJpaRepository.findById(id).get();
+    }
+
+    @Override
+    public User findByIdentifier(String identifier){
+        return userJpaRepository.findUserByIdentifier(identifier);
     }
 }

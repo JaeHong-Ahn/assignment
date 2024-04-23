@@ -1,9 +1,12 @@
 package com.example.thecommerce.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.stereotype.Component;
+
+import javax.persistence.*;
+
+import static javax.persistence.GenerationType.*;
 
 @Entity
 @Table(name = "user")
@@ -17,7 +20,7 @@ import org.springframework.stereotype.Component;
 public class User extends BaseTimeEntity{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     @Column(name = "user_id")
     private Long id;
 

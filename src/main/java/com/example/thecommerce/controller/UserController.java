@@ -2,12 +2,17 @@ package com.example.thecommerce.controller;
 
 import com.example.thecommerce.dto.*;
 import com.example.thecommerce.entity.User;
+import com.example.thecommerce.security.MyDetails;
 import com.example.thecommerce.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -23,6 +28,7 @@ public class UserController {
      * identifier 중복 확인
      * 회원 목록 조회
      * 회원 정보 수정
+     * 회원 아이디
      * 회원 비밀번호 수정
      * 회원 탈퇴
      */
@@ -33,26 +39,46 @@ public class UserController {
                            BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()){
-            return null;
+            System.out.println("바인딩 에러");
+            return "bindingError";
         }
 
+        System.out.println(userRegisterForm.getName());
         userService.createUser(userRegisterForm);
 
-        return null;
+        return "Register Success";
     }
 
     //로그인
     @PostMapping("/login")
     public String login(@Validated @RequestBody UserLoginForm form,
-                           BindingResult bindingResult) {
+                        BindingResult bindingResult, HttpServletResponse response) {
 
         if (bindingResult.hasErrors()){
             return null;
         }
 
-        userService.login(form);
+        User loginUser = userService.login2(form);
 
-        return null;
+        if (loginUser == null) {
+            bindingResult.reject("loginFail", "아이디 또는 비밀번호가 일치하지 않습니다.");
+            return null;
+        }
+
+        Cookie idCookie = new Cookie("userId", String.valueOf(loginUser.getId()));
+        //세션 쿠키 사용
+        response.addCookie(idCookie);
+
+        return "Login Success";
+    }
+
+    //로그 아웃
+    @PostMapping("/logout")
+    public String logout(HttpServletResponse response){
+        Cookie cookie = new Cookie("userId", null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return "Logout Success";
     }
 
     //회원 목록 조회
@@ -71,7 +97,7 @@ public class UserController {
         }
 
         userService.updateUserInfo(identifier, userUpdateForm);
-        return null;
+        return "UserInfo Update Success";
     }
 
     //회원 Identifier 수정
@@ -84,7 +110,7 @@ public class UserController {
         }
 
         userService.updateUserIdentifier(id, userUpdateIdentifierForm);
-        return null;
+        return "Identifier Update Success";
     }
 
     //회원 비밀번호 수정
@@ -97,19 +123,16 @@ public class UserController {
         }
 
         userService.updateUserPassword(id, userUpdatePasswordForm);
-        return null;
+        return "Password Update Success";
     }
 
     //회원 탈퇴
-    @PostMapping("/withdrawal/{id}")
-    public String withdrawal(@PathVariable Long id,
-                         BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
-            return null;
-        }
+    @PostMapping("/withdrawal")
+    public String withdrawal(Authentication authentication){
 
-        userService.withdrawal(id);
-
-        return null;
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        System.out.println(userDetails.getUsername());
+//        userService.findUserByUsername(userDetails.getUsername());
+        return "withdrawal success";
     }
 }
