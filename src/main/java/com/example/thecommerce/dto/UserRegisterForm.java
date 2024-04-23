@@ -7,27 +7,29 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.validation.constraints.NotBlank;
+
 @Getter
 @ToString
 @NoArgsConstructor
 public class UserRegisterForm {
 
-    @NotNull
+    @NotBlank(message = "아이디를 입력해주세요.")
     String identifier;
 
-    @NotNull
+    @NotBlank(message = "비밀번호를 입력해주세요.")
     String password;
 
-    @NotNull
+    @NotBlank(message = "닉네임을 입력해주세요.")
     String nickname;
 
-    @NotNull
+    @NotBlank(message = "성함을 입력해주세요.")
     String name;
 
-    @NotNull
+    @NotBlank(message = "전화번호를 입력해주세요.")
     String phoneNum;
 
-    @NotNull
+    @NotBlank(message = "이메일을 입력해주세요.")
     String email;
 
     public UserRegisterForm(String identifier, String password,

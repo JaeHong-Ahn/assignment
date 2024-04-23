@@ -1,19 +1,20 @@
 package com.example.thecommerce.dto;
 
-import com.sun.istack.internal.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import javax.validation.constraints.NotBlank;
 
 @Getter
 @ToString
 @NoArgsConstructor
 public class UserLoginForm {
 
-    @NotNull
+    @NotBlank(message = "아이디를 입력해주세요.")
     String identifier;
 
-    @NotNull
+    @NotBlank(message = "비밀번호를 입력해주세요.")
     String password;
 
     public UserLoginForm(String identifier, String password) {

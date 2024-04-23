@@ -1,25 +1,26 @@
 package com.example.thecommerce.dto;
 
-import com.sun.istack.internal.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import javax.validation.constraints.NotBlank;
 
 @Getter
 @ToString
 @NoArgsConstructor
 public class UserUpdateForm {
 
-    @NotNull
+    @NotBlank(message = "닉네임을 입력해주세요.")
     String nickname;
 
-    @NotNull
+    @NotBlank(message = "이름을 입력해주세요.")
     String name;
 
-    @NotNull
+    @NotBlank(message = "전화번호를 입력해주세요.")
     String phoneNum;
 
-    @NotNull
+    @NotBlank(message = "이메일을 입력해주세요.")
     String email;
 
     public UserUpdateForm(String nickname, String name,

@@ -2,11 +2,9 @@ package com.example.thecommerce.controller;
 
 import com.example.thecommerce.dto.*;
 import com.example.thecommerce.entity.User;
-import com.example.thecommerce.security.MyDetails;
 import com.example.thecommerce.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -35,7 +33,7 @@ public class UserController {
 
     //회원 가입
     @PostMapping("/join")
-    public String register(@Validated @RequestBody UserRegisterForm userRegisterForm,
+    public String join(@Validated @RequestBody UserRegisterForm userRegisterForm,
                            BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()){
