@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static com.example.thecommerce.util.DefaultHttpResponse.*;
+import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,14 +46,16 @@ public class UserController {
 
     //회원 가입
     @PostMapping("/join")
-    public ResponseEntity<? extends Object> join(@Validated @RequestBody UserRegisterForm userRegisterForm,
+    public ResponseEntity<? extends Object> join(@Validated @RequestBody UserRegisterForm form,
                                                  BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()){
             return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
         }
 
-        userService.createUser(userRegisterForm);
+        validateRegisterForm(form);
+
+        userService.createUser(form);
 
         return CREATE_SUCCESS_RESPONSE;
     }
@@ -106,40 +109,46 @@ public class UserController {
 
     //회원 정보 수정
     @PostMapping("/{identifier}")
-    public ResponseEntity<? extends Object> update(@Validated @RequestBody UserUpdateForm userUpdateForm,
+    public ResponseEntity<? extends Object> update(@Validated @RequestBody UserUpdateForm form,
                          @PathVariable String identifier,
                          BindingResult bindingResult){
         if (bindingResult.hasErrors()){
             return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
         }
 
-        UserUpdateResponseDto dto = userService.updateUserInfo(identifier, userUpdateForm);
+        validateUpdateForm(form);
+
+        UserUpdateResponseDto dto = userService.updateUserInfo(identifier, form);
         return DEFAULT_SUCCESS_RESPONSE(dto);
     }
 
     //회원 Identifier 수정
     @PostMapping("/update/identifier/{id}")
-    public ResponseEntity<? extends Object> updateIdentifier(@Validated @RequestBody UserUpdateIdentifierForm userUpdateIdentifierForm,
+    public ResponseEntity<? extends Object> updateIdentifier(@Validated @RequestBody UserUpdateIdentifierForm form,
                          @PathVariable Long id, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
             return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
         }
 
-        UserUpdateIdentifierResponseDto dto = userService.updateUserIdentifier(id, userUpdateIdentifierForm);
+        validateIdentifierUpdateForm(form, id);
+
+        UserUpdateIdentifierResponseDto dto = userService.updateUserIdentifier(id, form);
 
         return DEFAULT_SUCCESS_RESPONSE(dto);
     }
 
     //회원 비밀번호 수정
     @PostMapping("/update/password/{id}")
-    public ResponseEntity<? extends Object>  updatePassword(@Validated @RequestBody UserUpdatePasswordForm userUpdatePasswordForm,
+    public ResponseEntity<? extends Object>  updatePassword(@Validated @RequestBody UserUpdatePasswordForm form,
                          @PathVariable Long id,
                          BindingResult bindingResult){
         if (bindingResult.hasErrors()){
             return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
         }
 
-        userService.updateUserPassword(id, userUpdatePasswordForm);
+        validatePasswordUpdateForm(form);
+
+        userService.updateUserPassword(id, form);
         return OK_WITH_NO_DATA;
     }
 
@@ -173,5 +182,57 @@ public class UserController {
                 throw new CustomException(ErrorCode.SORT_NOT_FOUND);
         }
         return sort;
+    }
+
+    private void validateRegisterForm(UserRegisterForm form) {
+
+        if (userService.isDuplicateIdentifier(form.getIdentifier())) {
+            log.print("아이디 중복 오류 identifier={" + form.getIdentifier() + "}");
+            throw new CustomException(ErrorCode.DUPLICATED_IDENTIFIER_ERROR);
+        }
+        if (userService.isDuplicateNickname(form.getNickname())) {
+            log.print("닉네임 중복 오류 nickname={" + form.getNickname() + "}");
+            throw new CustomException(ErrorCode.DUPLICATED_NICKNAME_ERROR);
+        }
+        if (userService.isDuplicateEmail(form.getEmail())) {
+            log.print("이메일 중복 오류 email={" + form.getEmail() + "}");
+            throw new CustomException(ErrorCode.DUPLICATED_EMAIL_ERROR);
+        }
+        if (userService.isDuplicatePhoneNum(form.getPhoneNum())) {
+            log.print("전화번호 중복 오류 email={" + form.getPhoneNum() + "}");
+            throw new CustomException(ErrorCode.DUPLICATED_PHONE_NUM_ERROR);
+        }
+    }
+
+    private void validateUpdateForm(UserUpdateForm form) {
+
+        if (userService.isDuplicateNickname(form.getNickname())) {
+            log.print("닉네임 중복 오류 nickname={" + form.getNickname() + "}");
+            throw new CustomException(ErrorCode.DUPLICATED_NICKNAME_ERROR);
+        }
+        if (userService.isDuplicateEmail(form.getEmail())) {
+            log.print("이메일 중복 오류 email={" + form.getEmail() + "}");
+            throw new CustomException(ErrorCode.DUPLICATED_EMAIL_ERROR);
+        }
+        if (userService.isDuplicatePhoneNum(form.getPhoneNum())) {
+            log.print("전화번호 중복 오류 email={" + form.getPhoneNum() + "}");
+            throw new CustomException(ErrorCode.DUPLICATED_PHONE_NUM_ERROR);
+        }
+    }
+
+    private void validateIdentifierUpdateForm(UserUpdateIdentifierForm form, Long id) {
+
+        if (userService.isDuplicateIdentifierToUpdate(form.getIdentifier(), id)) {
+            log.print("아이디 중복 오류 identifier={" + form.getIdentifier() + "}");
+            throw new CustomException(ErrorCode.DUPLICATED_IDENTIFIER_ERROR);
+        }
+    }
+
+    private void validatePasswordUpdateForm(UserUpdatePasswordForm form) {
+
+        if (!form.getPassword().equals(form.getCheckPassword())) {
+            log.print("비밀번호 불일치={"+ form.getPassword() +"},{" + form.getCheckPassword() + "}");
+            throw new CustomException(ErrorCode.DIFFERENT_PASSWORD_ERROR);
+        }
     }
 }

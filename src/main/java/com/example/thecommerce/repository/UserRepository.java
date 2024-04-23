@@ -29,4 +29,14 @@ public interface UserRepository {
     User findUserById(Long id);
 
     User findByIdentifier(String identifier);
+
+    Boolean existsByIdentifier(String identifier);
+
+    Boolean existsByIdentifierToUpdate(String identifier, Long id);
+
+    Boolean existsByNickname(String nickname);
+
+    Boolean existsByPhoneNum(String phoneNum);
+
+    Boolean existsByEmail(String email);
 }

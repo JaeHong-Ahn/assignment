@@ -89,4 +89,34 @@ public class UserRepositoryImpl implements UserRepository {
     public User findByIdentifier(String identifier){
         return userJpaRepository.findUserByIdentifier(identifier);
     }
+
+    @Override
+    public Boolean existsByIdentifier(String identifier) {
+        return userJpaRepository.existsUserByIdentifier(identifier);
+    }
+
+    @Override
+    public Boolean existsByIdentifierToUpdate(String identifier, Long id) {
+
+        if (userJpaRepository.findById(id).get().getIdentifier().equals(identifier)){
+            return false;
+        }
+
+        return userJpaRepository.existsUserByIdentifier(identifier);
+    }
+
+    @Override
+    public Boolean existsByNickname(String nickname) {
+        return userJpaRepository.existsUserByNickname(nickname);
+    }
+
+    @Override
+    public Boolean existsByPhoneNum(String phoneNum) {
+        return userJpaRepository.existsUserByPhoneNum(phoneNum);
+    }
+
+    @Override
+    public Boolean existsByEmail(String email) {
+        return userJpaRepository.existsUserByEmail(email);
+    }
 }

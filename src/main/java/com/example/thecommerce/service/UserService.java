@@ -60,4 +60,24 @@ public class UserService {
     public User findUserById(Long id) {
         return userRepository.findUserById(id);
     }
+
+    public Boolean isDuplicateIdentifier(String identifier) {
+        return userRepository.existsByIdentifier(identifier);
+    }
+
+    public Boolean isDuplicateIdentifierToUpdate(String identifier, Long id) {
+        return userRepository.existsByIdentifierToUpdate(identifier, id);
+    }
+
+    public Boolean isDuplicateNickname(String nickname) {
+        return userRepository.existsByNickname(nickname);
+    }
+
+    public Boolean isDuplicatePhoneNum(String phoneNum) {
+        return userRepository.existsByPhoneNum(phoneNum);
+    }
+
+    public Boolean isDuplicateEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
 }
