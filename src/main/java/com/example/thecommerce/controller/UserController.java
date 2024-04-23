@@ -4,8 +4,6 @@ import com.example.thecommerce.dto.*;
 import com.example.thecommerce.entity.User;
 import com.example.thecommerce.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
