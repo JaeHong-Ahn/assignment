@@ -4,11 +4,11 @@ import com.example.thecommerce.dto.*;
 import com.example.thecommerce.entity.User;
 import com.example.thecommerce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -23,8 +23,8 @@ public class UserService {
         userRepository.create(form);
     }
 
-    public List<User> findAllUsers() {
-        return userRepository.findAllUsers();
+    public Page<User> findAllUsers(Pageable pageable) {
+        return userRepository.findAllUsers(pageable);
     }
 
     @Transactional

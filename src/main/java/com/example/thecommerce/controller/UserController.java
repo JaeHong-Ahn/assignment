@@ -1,9 +1,17 @@
 package com.example.thecommerce.controller;
 
 import com.example.thecommerce.dto.*;
+import com.example.thecommerce.entity.SortOption;
 import com.example.thecommerce.entity.User;
+import com.example.thecommerce.exception.CustomException;
+import com.example.thecommerce.exception.ErrorCode;
 import com.example.thecommerce.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -12,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 import static com.example.thecommerce.util.DefaultHttpResponse.*;
 
@@ -83,11 +90,18 @@ public class UserController {
 
     //회원 목록 조회
     @GetMapping("/list")
-    public ResponseEntity<? extends Object> getUserList(){
+    public ResponseEntity<? extends Object> getUserList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                                                        @RequestParam(name = "pg", defaultValue = "0") Long page,
+                                                        @RequestParam(name = "ps", defaultValue = "10") Long pageSize,
+                                                        @RequestParam(name = "option", defaultValue = "LATEST_JOIN") SortOption sortOption){
 
-        List<User> allUsers = userService.findAllUsers();
-        //추후 쿼리 스트링 방식으로 반환
-        return DEFAULT_SUCCESS_RESPONSE(allUsers);
+        Sort sort = getSort(sortOption);
+
+        pageable = PageRequest.of(page.intValue(), pageSize.intValue(), sort);
+
+        Page<User> usersListPage = userService.findAllUsers(pageable);
+
+        return DEFAULT_SUCCESS_RESPONSE(usersListPage);
     }
 
     //회원 정보 수정
@@ -137,5 +151,27 @@ public class UserController {
 
         userService.withdrawal(Long.valueOf(cookie.getValue()));
         return OK_WITH_NO_DATA;
+    }
+
+    private static Sort getSort(SortOption sortOption) {
+        Sort sort;
+
+        switch (sortOption) {
+            case EARLY_JOIN:
+                sort = Sort.by(Sort.Direction.ASC, "createdAt");
+                break;
+            case LATEST_JOIN:
+                sort = Sort.by(Sort.Direction.DESC, "createdAt");
+                break;
+            case NAME_DESC:
+                sort = Sort.by(Sort.Direction.DESC, "name");
+                break;
+            case NAME_ASC:
+                sort = Sort.by(Sort.Direction.ASC, "name");
+                break;
+            default:
+                throw new CustomException(ErrorCode.SORT_NOT_FOUND);
+        }
+        return sort;
     }
 }

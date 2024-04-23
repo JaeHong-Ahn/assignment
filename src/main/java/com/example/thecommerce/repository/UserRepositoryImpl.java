@@ -4,6 +4,8 @@ import com.example.thecommerce.dto.*;
 import com.example.thecommerce.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
@@ -27,13 +29,14 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public List<User> findAllUsers() {
-        return userJpaRepository.findAll();
+    public Page<User> findAllUsers(Pageable pageable) {
+        return userJpaRepository.findAll(pageable);
     }
 
     @Override
     public UserUpdateResponseDto updateUserInfo(String identifier, UserUpdateForm userUpdateForm) {
         User findUser = userJpaRepository.findUserByIdentifier(identifier);
+
         findUser.setNickname(userUpdateForm.getNickname());
         findUser.setName(userUpdateForm.getName());
         findUser.setPhoneNum(userUpdateForm.getPhoneNum());
@@ -57,7 +60,6 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void delete(Long id) {
-//        userJpaRepository.deleteUserById(id);
         userJpaRepository.deleteById(id);
     }
 
