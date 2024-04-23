@@ -3,7 +3,6 @@ package com.example.thecommerce.dto;
 import com.example.thecommerce.entity.User;
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Builder

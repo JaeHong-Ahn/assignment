@@ -69,7 +69,7 @@ public class UserController {
             return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
         }
 
-        User loginUser = userService.login2(form);
+        User loginUser = userService.login(form);
 
         if (loginUser == null) {
             return DEFAULT_ERROR_RESPONSE("아이디 또는 비밀번호가 일치하지 않습니다.");

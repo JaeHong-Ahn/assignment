@@ -47,18 +47,10 @@ public class UserService {
         userRepository.delete(id);
     }
 
-    public void login(UserLoginForm form) {
-        userRepository.login(form);
-    }
-
-    public User login2(UserLoginForm form){
+    public User login(UserLoginForm form){
         return userRepository.findByLoginId(form.getIdentifier())
                 .filter(u -> passwordEncoder.matches(form.getPassword(), u.getPassword()))
                 .orElse(null);
-    }
-
-    public User findUserById(Long id) {
-        return userRepository.findUserById(id);
     }
 
     public Boolean isDuplicateIdentifier(String identifier) {

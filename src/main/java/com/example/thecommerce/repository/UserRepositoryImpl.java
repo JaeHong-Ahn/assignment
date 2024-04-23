@@ -9,9 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -64,30 +61,10 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void login(UserLoginForm form) {
-        if (userJpaRepository.existsUserByIdentifier(form.getIdentifier())){
-            if (passwordEncoder.matches(form.getPassword(), userJpaRepository.findUserByIdentifier(form.getIdentifier()).getPassword())) {
-                //success
-            }
-
-        }
-        //fail
-    }
-    @Override
     public Optional<User> findByLoginId(String identifier){
         return userJpaRepository.findAll().stream()
                 .filter(m -> m.getIdentifier().equals(identifier))
                 .findFirst();
-    }
-
-    @Override
-    public User findUserById(Long id) {
-        return userJpaRepository.findById(id).get();
-    }
-
-    @Override
-    public User findByIdentifier(String identifier){
-        return userJpaRepository.findUserByIdentifier(identifier);
     }
 
     @Override
