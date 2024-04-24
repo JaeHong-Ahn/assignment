@@ -53,8 +53,6 @@ public class UserController {
             return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
         }
 
-        validateRegisterForm(form);
-
         userService.createUser(form);
 
         return CREATE_SUCCESS_RESPONSE;
@@ -115,8 +113,6 @@ public class UserController {
             return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
         }
 
-        validateUpdateForm(form);
-
         UserUpdateResponseDto dto = userService.updateUserInfo(identifier, form);
         return DEFAULT_SUCCESS_RESPONSE(dto);
     }
@@ -128,8 +124,6 @@ public class UserController {
         if (bindingResult.hasErrors()){
             return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
         }
-
-        validateIdentifierUpdateForm(form, id);
 
         UserUpdateIdentifierResponseDto dto = userService.updateUserIdentifier(id, form);
 
@@ -144,8 +138,6 @@ public class UserController {
         if (bindingResult.hasErrors()){
             return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
         }
-
-        validatePasswordUpdateForm(form);
 
         userService.updateUserPassword(id, form);
         return OK_WITH_NO_DATA;
@@ -181,57 +173,5 @@ public class UserController {
                 throw new CustomException(ErrorCode.SORT_NOT_FOUND);
         }
         return sort;
-    }
-
-    private void validateRegisterForm(UserRegisterForm form) {
-
-        if (userService.isDuplicateIdentifier(form.getIdentifier())) {
-            log.print("아이디 중복 오류 identifier={" + form.getIdentifier() + "}");
-            throw new CustomException(ErrorCode.DUPLICATED_IDENTIFIER_ERROR);
-        }
-        if (userService.isDuplicateNickname(form.getNickname())) {
-            log.print("닉네임 중복 오류 nickname={" + form.getNickname() + "}");
-            throw new CustomException(ErrorCode.DUPLICATED_NICKNAME_ERROR);
-        }
-        if (userService.isDuplicateEmail(form.getEmail())) {
-            log.print("이메일 중복 오류 email={" + form.getEmail() + "}");
-            throw new CustomException(ErrorCode.DUPLICATED_EMAIL_ERROR);
-        }
-        if (userService.isDuplicatePhoneNum(form.getPhoneNum())) {
-            log.print("전화번호 중복 오류 email={" + form.getPhoneNum() + "}");
-            throw new CustomException(ErrorCode.DUPLICATED_PHONE_NUM_ERROR);
-        }
-    }
-
-    private void validateUpdateForm(UserUpdateForm form) {
-
-        if (userService.isDuplicateNickname(form.getNickname())) {
-            log.print("닉네임 중복 오류 nickname={" + form.getNickname() + "}");
-            throw new CustomException(ErrorCode.DUPLICATED_NICKNAME_ERROR);
-        }
-        if (userService.isDuplicateEmail(form.getEmail())) {
-            log.print("이메일 중복 오류 email={" + form.getEmail() + "}");
-            throw new CustomException(ErrorCode.DUPLICATED_EMAIL_ERROR);
-        }
-        if (userService.isDuplicatePhoneNum(form.getPhoneNum())) {
-            log.print("전화번호 중복 오류 email={" + form.getPhoneNum() + "}");
-            throw new CustomException(ErrorCode.DUPLICATED_PHONE_NUM_ERROR);
-        }
-    }
-
-    private void validateIdentifierUpdateForm(UserUpdateIdentifierForm form, Long id) {
-
-        if (userService.isDuplicateIdentifierToUpdate(form.getIdentifier(), id)) {
-            log.print("아이디 중복 오류 identifier={" + form.getIdentifier() + "}");
-            throw new CustomException(ErrorCode.DUPLICATED_IDENTIFIER_ERROR);
-        }
-    }
-
-    private void validatePasswordUpdateForm(UserUpdatePasswordForm form) {
-
-        if (!form.getPassword().equals(form.getCheckPassword())) {
-            log.print("비밀번호 불일치={"+ form.getPassword() +"},{" + form.getCheckPassword() + "}");
-            throw new CustomException(ErrorCode.DIFFERENT_PASSWORD_ERROR);
-        }
     }
 }

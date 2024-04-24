@@ -25,7 +25,7 @@ public interface UserRepository {
 
     Boolean existsByIdentifier(String identifier);
 
-    Boolean existsByIdentifierToUpdate(String identifier, Long id);
+    Boolean existsByIdentifierToUpdate(String newIdentifier, String originalIdentifier);
 
     Boolean existsByNickname(String nickname);
 

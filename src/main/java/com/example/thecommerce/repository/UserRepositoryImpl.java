@@ -72,13 +72,13 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Boolean existsByIdentifierToUpdate(String identifier, Long id) {
+    public Boolean existsByIdentifierToUpdate(String newIdentifier, String originalIdentifier) {
 
-        if (userJpaRepository.findById(id).get().getIdentifier().equals(identifier)){
+        if (newIdentifier.equals(originalIdentifier)){
             return false;
         }
 
-        return userJpaRepository.existsUserByIdentifier(identifier);
+        return userJpaRepository.existsUserByIdentifier(newIdentifier);
     }
 
     @Override
