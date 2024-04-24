@@ -93,16 +93,15 @@ public class UserController {
 
     //회원 목록 조회
     @GetMapping("/list")
-    public ResponseEntity<? extends Object> getUserList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                                                        @RequestParam(name = "pg", defaultValue = "0") Long page,
+    public ResponseEntity<? extends Object> getUserList(@RequestParam(name = "pg", defaultValue = "0") Long page,
                                                         @RequestParam(name = "ps", defaultValue = "10") Long pageSize,
                                                         @RequestParam(name = "option", defaultValue = "LATEST_JOIN") SortOption sortOption){
 
         Sort sort = getSort(sortOption);
 
-        pageable = PageRequest.of(page.intValue(), pageSize.intValue(), sort);
+        PageRequest pageRequest = PageRequest.of(page.intValue(), pageSize.intValue(), sort);
 
-        Page<User> usersListPage = userService.findAllUsers(pageable);
+        Page<User> usersListPage = userService.findAllUsers(pageRequest);
 
         return DEFAULT_SUCCESS_RESPONSE(usersListPage);
     }
@@ -123,7 +122,7 @@ public class UserController {
     }
 
     //회원 Identifier 수정
-    @PostMapping("/update/identifier/{id}")
+    @PostMapping("/identifier/{id}")
     public ResponseEntity<? extends Object> updateIdentifier(@Validated @RequestBody UserUpdateIdentifierForm form,
                          @PathVariable Long id, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
@@ -138,7 +137,7 @@ public class UserController {
     }
 
     //회원 비밀번호 수정
-    @PostMapping("/update/password/{id}")
+    @PostMapping("/password/{id}")
     public ResponseEntity<? extends Object>  updatePassword(@Validated @RequestBody UserUpdatePasswordForm form,
                          @PathVariable Long id,
                          BindingResult bindingResult){

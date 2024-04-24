@@ -22,7 +22,6 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void create(UserRegisterForm userRegisterForm) {
         userJpaRepository.save(UserRegisterForm.toUser(passwordEncoder, userRegisterForm));
-        System.out.println(userRegisterForm.getNickname());
     }
 
     @Override
