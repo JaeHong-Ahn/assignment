@@ -113,21 +113,7 @@ public class UserController {
             return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
         }
 
-        UserUpdateResponseDto dto = userService.updateUserInfo(identifier, form);
-        return DEFAULT_SUCCESS_RESPONSE(dto);
-    }
-
-    //회원 Identifier 수정
-    @PostMapping("/identifier/{id}")
-    public ResponseEntity<? extends Object> updateIdentifier(@Validated @RequestBody UserUpdateIdentifierForm form,
-                         @PathVariable Long id, BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
-            return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
-        }
-
-        UserUpdateIdentifierResponseDto dto = userService.updateUserIdentifier(id, form);
-
-        return DEFAULT_SUCCESS_RESPONSE(dto);
+        return DEFAULT_SUCCESS_RESPONSE(userService.updateUserInfo(form, identifier));
     }
 
     //회원 비밀번호 수정

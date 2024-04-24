@@ -13,7 +13,7 @@ public interface UserRepository {
 
     Page<User> findAllUsers(Pageable pageable);
 
-    UserUpdateResponseDto updateUserInfo(String identifier, UserUpdateForm userUpdateForm);
+    UserUpdateResponseDto updateUserInfo(UserUpdateForm userUpdateForm, String identifier);
 
     UserUpdateIdentifierResponseDto updateUserIdentifier(Long id, UserUpdateIdentifierForm form);
 

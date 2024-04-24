@@ -33,14 +33,9 @@ public class UserService {
     }
 
     @Transactional
-    public UserUpdateResponseDto updateUserInfo(String identifier, UserUpdateForm form) {
-        validateUpdate(form);
-        return userRepository.updateUserInfo(identifier, form);
-    }
-
-    @Transactional
-    public UserUpdateIdentifierResponseDto updateUserIdentifier(Long id, UserUpdateIdentifierForm form) {
-        return userRepository.updateUserIdentifier(id, form);
+    public UserUpdateResponseDto updateUserInfo(UserUpdateForm form, String identifier) {
+        validateUpdate(form, identifier);
+        return userRepository.updateUserInfo(form, identifier);
     }
 
     @Transactional
@@ -67,7 +62,8 @@ public class UserService {
         isDuplicateEmail(form.getEmail());
     }
 
-    public void validateUpdate(UserUpdateForm form){
+    public void validateUpdate(UserUpdateForm form, String identifier){
+        isDuplicateIdentifierToUpdate(form.getIdentifier(), identifier);
         isDuplicateNickname(form.getNickname());
         isDuplicatePhoneNum(form.getPhoneNum());
         isDuplicateEmail(form.getEmail());

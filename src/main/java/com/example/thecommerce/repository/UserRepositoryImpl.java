@@ -30,7 +30,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public UserUpdateResponseDto updateUserInfo(String identifier, UserUpdateForm userUpdateForm) {
+    public UserUpdateResponseDto updateUserInfo(UserUpdateForm userUpdateForm, String identifier) {
         User findUser = userJpaRepository.findUserByIdentifier(identifier);
 
         findUser.setNickname(userUpdateForm.getNickname());
