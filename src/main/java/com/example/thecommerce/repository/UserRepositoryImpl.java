@@ -60,30 +60,23 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Boolean existsByIdentifier(String identifier) {
-        return userJpaRepository.existsUserByIdentifier(identifier);
+    public Boolean existsByIdentifierAndNotDeleted(String identifier) {
+        return userJpaRepository.existsUserByIdentifier_AndIsDeleted(identifier, false);
     }
 
     @Override
-    public Boolean existsByIdentifierToUpdate(String newIdentifier, String originalIdentifier) {
-        if (newIdentifier.equals(originalIdentifier)){return false;}
-
-        return userJpaRepository.existsUserByIdentifier(newIdentifier);
+    public Boolean existsByNicknameAndNotDeleted(String nickname) {
+        return userJpaRepository.existsUserByNickname_AndIsDeleted(nickname, false);
     }
 
     @Override
-    public Boolean existsByNickname(String nickname) {
-        return userJpaRepository.existsUserByNickname(nickname);
+    public Boolean existsByPhoneNumAndNotDeleted(String phoneNum) {
+        return userJpaRepository.existsUserByPhoneNum_AndIsDeleted(phoneNum, false);
     }
 
     @Override
-    public Boolean existsByPhoneNum(String phoneNum) {
-        return userJpaRepository.existsUserByPhoneNum(phoneNum);
-    }
-
-    @Override
-    public Boolean existsByEmail(String email) {
-        return userJpaRepository.existsUserByEmail(email);
+    public Boolean existsByEmailAndNotDeleted(String email) {
+        return userJpaRepository.existsUserByEmail_AndIsDeleted(email, false);
     }
 
     @Override

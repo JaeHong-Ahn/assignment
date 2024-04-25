@@ -21,15 +21,13 @@ public interface UserRepository {
 
     User findUserById(Long id);
 
-    Boolean existsByIdentifier(String identifier);
+    Boolean existsByIdentifierAndNotDeleted(String identifier);
 
-    Boolean existsByIdentifierToUpdate(String newIdentifier, String originalIdentifier);
+    Boolean existsByNicknameAndNotDeleted(String nickname);
 
-    Boolean existsByNickname(String nickname);
+    Boolean existsByPhoneNumAndNotDeleted(String phoneNum);
 
-    Boolean existsByPhoneNum(String phoneNum);
-
-    Boolean existsByEmail(String email);
+    Boolean existsByEmailAndNotDeleted(String email);
 
     User findUserByIdentifier(String identifier);
 }

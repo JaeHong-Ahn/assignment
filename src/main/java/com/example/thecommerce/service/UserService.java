@@ -77,30 +77,23 @@ public class UserService {
     }
 
     public void validateUpdate(UserUpdateForm form, String identifier){
-        isDuplicateIdentifierToUpdate(form.getIdentifier(), identifier);
-        isDuplicateNickname(form.getNickname());
-        isDuplicatePhoneNum(form.getPhoneNum());
-        isDuplicateEmail(form.getEmail());
+        User original = userRepository.findUserByIdentifier(identifier);
+        isDuplicateIdentifierToUpdate(form.getIdentifier(), original);
+        isDuplicateNicknameToUpdate(form.getNickname(), original);
+        isDuplicatePhoneNumToUpdate(form.getPhoneNum(), original);
+        isDuplicateEmailToUpdate(form.getEmail(), original);
     }
 
     public void isDuplicateIdentifier(String identifier) {
-        Boolean isDuplicated = userRepository.existsByIdentifier(identifier);
+        Boolean isDuplicated = userRepository.existsByIdentifierAndNotDeleted(identifier);
         if (isDuplicated) {
             log.print("아이디 중복 오류 identifier={" + identifier + "}");
             throw new CustomException(ErrorCode.DUPLICATED_IDENTIFIER_ERROR);
         }
     }
 
-    public void isDuplicateIdentifierToUpdate(String newIdentifier, String originalIdentifier) {
-        Boolean isDuplicated = userRepository.existsByIdentifierToUpdate(newIdentifier, originalIdentifier);
-        if (isDuplicated) {
-            log.print("아이디 중복 오류 identifier={" + newIdentifier + "}");
-            throw new CustomException(ErrorCode.DUPLICATED_IDENTIFIER_ERROR);
-        }
-    }
-
     public void isDuplicateNickname(String nickname) {
-        Boolean isDuplicated = userRepository.existsByNickname(nickname);
+        Boolean isDuplicated = userRepository.existsByNicknameAndNotDeleted(nickname);
         if (isDuplicated) {
             log.print("닉네임 중복 오류 nickname={" + nickname + "}");
             throw new CustomException(ErrorCode.DUPLICATED_NICKNAME_ERROR);
@@ -108,7 +101,7 @@ public class UserService {
     }
 
     public void isDuplicatePhoneNum(String phoneNum) {
-        Boolean isDuplicated = userRepository.existsByPhoneNum(phoneNum);
+        Boolean isDuplicated = userRepository.existsByPhoneNumAndNotDeleted(phoneNum);
         if (isDuplicated) {
             log.print("전화번호 중복 오류 email={" + phoneNum + "}");
             throw new CustomException(ErrorCode.DUPLICATED_PHONE_NUM_ERROR);
@@ -116,15 +109,42 @@ public class UserService {
     }
 
     public void isDuplicateEmail(String email) {
-        Boolean isDuplicated = userRepository.existsByEmail(email);
+        Boolean isDuplicated = userRepository.existsByEmailAndNotDeleted(email);
         if (isDuplicated) {
             log.print("이메일 중복 오류 email={" + email + "}");
             throw new CustomException(ErrorCode.DUPLICATED_EMAIL_ERROR);
         }
     }
 
-    private void validatePasswordUpdateForm(UserUpdatePasswordForm form) {
+    public void isDuplicateIdentifierToUpdate(String identifier, User user) {
+        if (userRepository.existsByIdentifierAndNotDeleted(identifier) && !user.getIdentifier().equals(identifier)) {
+            log.print("아이디 중복 오류 identifier={" + identifier + "}");
+            throw new CustomException(ErrorCode.DUPLICATED_IDENTIFIER_ERROR);
+        }
+    }
 
+    public void isDuplicateNicknameToUpdate(String nickname, User user) {
+        if (userRepository.existsByNicknameAndNotDeleted(nickname) && !user.getNickname().equals(nickname)) {
+            log.print("닉네임 중복 오류 nickname={" + nickname + "}");
+            throw new CustomException(ErrorCode.DUPLICATED_NICKNAME_ERROR);
+        }
+    }
+
+    public void isDuplicatePhoneNumToUpdate(String phoneNum, User user) {
+        if (userRepository.existsByPhoneNumAndNotDeleted(phoneNum) && !user.getPhoneNum().equals(phoneNum)) {
+            log.print("전화번호 중복 오류 email={" + phoneNum + "}");
+            throw new CustomException(ErrorCode.DUPLICATED_PHONE_NUM_ERROR);
+        }
+    }
+
+    public void isDuplicateEmailToUpdate(String email, User user) {
+        if (userRepository.existsByEmailAndNotDeleted(email) && !user.getEmail().equals(email)) {
+            log.print("이메일 중복 오류 email={" + email + "}");
+            throw new CustomException(ErrorCode.DUPLICATED_EMAIL_ERROR);
+        }
+    }
+
+    private void validatePasswordUpdateForm(UserUpdatePasswordForm form) {
         if (!form.getPassword().equals(form.getCheckPassword())) {
             log.print("비밀번호 불일치={"+ form.getPassword() +"},{" + form.getCheckPassword() + "}");
             throw new CustomException(ErrorCode.DIFFERENT_PASSWORD_ERROR);

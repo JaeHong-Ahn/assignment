@@ -9,11 +9,11 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
 
     User findUserById(Long id);
 
-    Boolean existsUserByIdentifier(String identifier);
+    Boolean existsUserByIdentifier_AndIsDeleted(String identifier, Boolean isDeleted);
 
-    Boolean existsUserByNickname(String nickname);
+    Boolean existsUserByNickname_AndIsDeleted(String nickname, Boolean isDeleted);
 
-    Boolean existsUserByPhoneNum(String phoneNum);
+    Boolean existsUserByPhoneNum_AndIsDeleted(String phoneNum, Boolean isDeleted);
 
-    Boolean existsUserByEmail(String email);
+    Boolean existsUserByEmail_AndIsDeleted(String email, Boolean isDeleted);
 }
