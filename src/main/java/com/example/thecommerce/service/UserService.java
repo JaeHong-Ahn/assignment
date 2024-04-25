@@ -51,12 +51,13 @@ public class UserService {
 
     @Transactional
     public void withdrawal(Long id) {
-        userRepository.delete(id);
+        User deletedUser = userRepository.findUserById(id);
+        User.toDelete(deletedUser);
     }
 
     public User login(UserLoginForm form){
         return userRepository.findByLoginId(form.getIdentifier())
-                .filter(u -> passwordEncoder.matches(form.getPassword(), u.getPassword()))
+                .filter(u -> passwordEncoder.matches(form.getPassword(), u.getPassword()) && u.getIsDeleted().equals(false))
                 .orElseThrow(() -> new CustomException(ErrorCode.FAILED_TO_LOGIN));
     }
 

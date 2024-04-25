@@ -17,9 +17,9 @@ public interface UserRepository {
 
     void updateUserPassword(Long id, UserUpdatePasswordForm form);
 
-    void delete(Long id);
-
     Optional<User> findByLoginId(String identifier);
+
+    User findUserById(Long id);
 
     Boolean existsByIdentifier(String identifier);
 

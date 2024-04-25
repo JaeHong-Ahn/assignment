@@ -48,15 +48,15 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void delete(Long id) {
-        userJpaRepository.deleteById(id);
-    }
-
-    @Override
     public Optional<User> findByLoginId(String identifier){
         return userJpaRepository.findAll().stream()
                 .filter(m -> m.getIdentifier().equals(identifier))
                 .findFirst();
+    }
+
+    @Override
+    public User findUserById(Long id) {
+        return userJpaRepository.findUserById(id);
     }
 
     @Override

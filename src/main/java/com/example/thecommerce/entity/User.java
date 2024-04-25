@@ -43,6 +43,10 @@ public class User extends BaseTimeEntity{
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Builder.Default
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
+
     public static User modifyUser(User user, UserUpdateForm form){
         user.setIdentifier(form.getIdentifier());
         user.setNickname(form.getNickname());
@@ -54,6 +58,10 @@ public class User extends BaseTimeEntity{
 
     public static void modifyUserPassword(User user, String password){
         user.setPassword(password);
+    }
+
+    public static void toDelete(User user){
+        user.setIsDeleted(true);
     }
 
 }
