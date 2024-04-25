@@ -30,7 +30,7 @@ public class UserFindRepositoryImpl implements UserFindRepository, UserSetReposi
 
     @Override
     public Page<User> findAllUsers(Pageable pageable) {
-        return userJpaRepository.findAll(pageable);
+        return userJpaRepository.findAllByIsDeleted(pageable, false);
     }
 
     @Override

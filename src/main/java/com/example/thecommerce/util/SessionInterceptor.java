@@ -14,7 +14,8 @@ public class SessionInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        if (request.getCookies()[0] == null) {
+        Long userId = Long.valueOf(request.getCookies()[0].getValue());
+        if (userId == null) {
             throw new CustomException(ErrorCode.NOT_AUTHENTICATED);
         }
         return true;
