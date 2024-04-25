@@ -18,7 +18,8 @@ public enum ErrorCode {
     DIFFERENT_PASSWORD_ERROR(BAD_REQUEST, "패스워드가 다릅니다."),
 
     SORT_NOT_FOUND(BAD_REQUEST, "해당 sort option을 찾을 수 없습니다."),
-    FAILED_TO_LOGIN(BAD_REQUEST, "아이디 또는 비밀번호가 일치하지 않습니다.");
+    FAILED_TO_LOGIN(BAD_REQUEST, "아이디 또는 비밀번호가 일치하지 않습니다."),
+    FAILED_TO_SIGN_UP(BAD_REQUEST, "회원가입에 실패하였습니다.");
 
 
     private final HttpStatus status;

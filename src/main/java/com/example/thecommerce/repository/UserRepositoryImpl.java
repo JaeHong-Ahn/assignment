@@ -20,8 +20,8 @@ public class UserRepositoryImpl implements UserRepository {
     private final UserJpaRepository userJpaRepository;
 
     @Override
-    public void create(User user) {
-        userJpaRepository.save(user);
+    public User create(User user) {
+        return userJpaRepository.save(user);
     }
 
     @Override
@@ -66,10 +66,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Boolean existsByIdentifierToUpdate(String newIdentifier, String originalIdentifier) {
-
-        if (newIdentifier.equals(originalIdentifier)){
-            return false;
-        }
+        if (newIdentifier.equals(originalIdentifier)){return false;}
 
         return userJpaRepository.existsUserByIdentifier(newIdentifier);
     }

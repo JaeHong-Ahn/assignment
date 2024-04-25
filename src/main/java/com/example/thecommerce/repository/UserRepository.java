@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface UserRepository {
 
-    void create(User user);
+    User create(User user);
 
     Page<User> findAllUsers(Pageable pageable);
 

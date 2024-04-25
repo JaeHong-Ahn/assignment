@@ -9,9 +9,7 @@ import com.example.thecommerce.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -22,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static com.example.thecommerce.util.DefaultHttpResponse.*;
-import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,11 +34,8 @@ public class UserController {
      * 로그아웃
      * 회원 목록 조회
      * 회원 정보 수정
-     * 회원 아이디
      * 회원 비밀번호 수정
      * 회원 탈퇴
-     * 닉네임 중복 확인
-     * identifier 중복 확인
      */
 
     //회원 가입
@@ -109,6 +103,7 @@ public class UserController {
     public ResponseEntity<? extends Object> update(@Validated @RequestBody UserUpdateForm form,
                          @PathVariable String identifier,
                          BindingResult bindingResult){
+
         if (bindingResult.hasErrors()){
             return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
         }
@@ -126,6 +121,7 @@ public class UserController {
         }
 
         userService.updateUserPassword(id, form);
+
         return OK_WITH_NO_DATA;
     }
 

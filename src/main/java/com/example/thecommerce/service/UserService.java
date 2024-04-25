@@ -25,7 +25,10 @@ public class UserService {
     @Transactional
     public void createUser(UserRegisterForm form) {
         validateJoin(form);
-        userRepository.create(UserRegisterForm.toUser(passwordEncoder, form));
+        User saved = userRepository.create(UserRegisterForm.toUser(passwordEncoder, form));
+        if (saved == null) {
+            throw new CustomException(ErrorCode.FAILED_TO_SIGN_UP);
+        }
     }
 
     public Page<User> findAllUsers(Pageable pageable) {
