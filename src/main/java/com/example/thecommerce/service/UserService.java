@@ -25,7 +25,7 @@ public class UserService {
     @Transactional
     public void createUser(UserRegisterForm form) {
         validateJoin(form);
-        userRepository.create(form);
+        userRepository.create(UserRegisterForm.toUser(passwordEncoder, form));
     }
 
     public Page<User> findAllUsers(Pageable pageable) {

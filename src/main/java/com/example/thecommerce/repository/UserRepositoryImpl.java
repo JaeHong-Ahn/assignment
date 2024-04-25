@@ -20,8 +20,8 @@ public class UserRepositoryImpl implements UserRepository {
     private final UserJpaRepository userJpaRepository;
 
     @Override
-    public void create(UserRegisterForm userRegisterForm) {
-        userJpaRepository.save(UserRegisterForm.toUser(passwordEncoder, userRegisterForm));
+    public void create(User user) {
+        userJpaRepository.save(user);
     }
 
     @Override
