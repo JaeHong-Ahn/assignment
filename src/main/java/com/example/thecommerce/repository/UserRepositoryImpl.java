@@ -18,7 +18,7 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class UserFindRepositoryImpl implements UserFindRepository, UserSetRepository, UserExistsRepository {
+public class UserRepositoryImpl implements UserFindRepository, UserSetRepository, UserExistsRepository {
 
     private final PasswordEncoder passwordEncoder;
     private final UserJpaRepository userJpaRepository;
