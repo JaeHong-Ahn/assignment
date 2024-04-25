@@ -30,4 +30,6 @@ public interface UserRepository {
     Boolean existsByPhoneNum(String phoneNum);
 
     Boolean existsByEmail(String email);
+
+    User findUserByIdentifier(String identifier);
 }

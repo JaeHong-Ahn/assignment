@@ -67,9 +67,7 @@ public class UserController {
             return DEFAULT_ERROR_RESPONSE("아이디 또는 비밀번호가 일치하지 않습니다.");
         }
 
-        Cookie idCookie = new Cookie("userId", String.valueOf(loginUser.getId()));
-        //세션 쿠키 사용
-        response.addCookie(idCookie);
+        setCookie(response, loginUser);
 
         return OK_WITH_NO_DATA;
     }
@@ -77,9 +75,7 @@ public class UserController {
     //로그 아웃
     @PostMapping("/logout")
     public ResponseEntity logout(HttpServletResponse response){
-        Cookie cookie = new Cookie("userId", null);
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
+        expireCookie(response, "userId");
         return OK_WITH_NO_DATA;
     }
 
@@ -101,14 +97,14 @@ public class UserController {
     //회원 정보 수정
     @PostMapping("/{identifier}")
     public ResponseEntity update(@Validated @RequestBody UserUpdateForm form,
-                         @PathVariable String identifier,
+                         @PathVariable String identifier, HttpServletRequest request,
                          BindingResult bindingResult){
 
         if (bindingResult.hasErrors()){
             return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
         }
 
-        return DEFAULT_SUCCESS_RESPONSE(userService.updateUserInfo(form, identifier));
+        return DEFAULT_SUCCESS_RESPONSE(userService.updateUserInfo(form, identifier, request));
     }
 
     //회원 비밀번호 수정
@@ -155,5 +151,16 @@ public class UserController {
                 throw new CustomException(ErrorCode.SORT_NOT_FOUND);
         }
         return sort;
+    }
+
+    private static void setCookie(HttpServletResponse response, User loginUser) {
+        Cookie idCookie = new Cookie("userId", String.valueOf(loginUser.getId()));
+        response.addCookie(idCookie);
+    }
+
+    private void expireCookie(HttpServletResponse response, String cookieName) {
+        Cookie cookie = new Cookie(cookieName, null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
     }
 }

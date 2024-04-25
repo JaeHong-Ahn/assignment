@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+
 import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 @RequiredArgsConstructor
@@ -36,11 +38,17 @@ public class UserService {
     }
 
     @Transactional
-    public UserUpdateResponseDto updateUserInfo(UserUpdateForm form, String identifier) {
-
-        validateUpdate(form, identifier);
-
-        return UserUpdateResponseDto.toDto(userRepository.updateUserInfo(form, identifier));
+    public UserUpdateResponseDto updateUserInfo(UserUpdateForm form, String identifier, HttpServletRequest request) {
+        User modifyingUser = userRepository.findUserById(Long.valueOf(request.getCookies()[0].getValue()));
+        User targetuser = userRepository.findUserByIdentifier(identifier);
+        
+        if (modifyingUser.equals(targetuser)) {
+            validateUpdate(form, identifier);
+            return UserUpdateResponseDto.toDto(userRepository.updateUserInfo(form, identifier));
+        }
+        else {
+            throw new CustomException(ErrorCode.WRONG_ACCESS);
+        }
     }
 
     @Transactional
