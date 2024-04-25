@@ -4,7 +4,7 @@ import com.example.thecommerce.dto.*;
 import com.example.thecommerce.entity.User;
 import com.example.thecommerce.exception.CustomException;
 import com.example.thecommerce.exception.ErrorCode;
-import com.example.thecommerce.repository.UserRepository;
+import com.example.thecommerce.repository.interfaces.UserFindRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,16 +17,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final UserFindRepository userFindRepository;
     private final PasswordEncoder passwordEncoder;
 
     public User login(UserLoginForm form){
-        return userRepository.findByLoginId(form.getIdentifier())
+        return userFindRepository.findByLoginId(form.getIdentifier())
                 .filter(u -> passwordEncoder.matches(form.getPassword(), u.getPassword()) && u.getIsDeleted().equals(false))
                 .orElseThrow(() -> new CustomException(ErrorCode.FAILED_TO_LOGIN));
     }
 
     public Page<User> findAllUsers(Pageable pageable) {
-        return userRepository.findAllUsers(pageable);
+        return userFindRepository.findAllUsers(pageable);
     }
 }

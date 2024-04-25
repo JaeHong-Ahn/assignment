@@ -6,7 +6,8 @@ import com.example.thecommerce.dto.UserUpdatePasswordForm;
 import com.example.thecommerce.entity.User;
 import com.example.thecommerce.exception.CustomException;
 import com.example.thecommerce.exception.ErrorCode;
-import com.example.thecommerce.repository.UserRepository;
+import com.example.thecommerce.repository.interfaces.UserExistsRepository;
+import com.example.thecommerce.repository.interfaces.UserFindRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +19,8 @@ import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 @Transactional(readOnly = true)
 public class UserValidations {
 
-    private final UserRepository userRepository;
+    private final UserFindRepository userFindRepository;
+    private final UserExistsRepository userExistsRepository;
 
     public void validateJoin(UserRegisterForm form){
         isDuplicateIdentifier(form.getIdentifier());
@@ -28,7 +30,7 @@ public class UserValidations {
     }
 
     public void validateUpdate(UserUpdateForm form, String identifier){
-        User original = userRepository.findUserByIdentifier(identifier);
+        User original = userFindRepository.findUserByIdentifier(identifier);
         isDuplicateIdentifierToUpdate(form.getIdentifier(), original);
         isDuplicateNicknameToUpdate(form.getNickname(), original);
         isDuplicatePhoneNumToUpdate(form.getPhoneNum(), original);
@@ -36,7 +38,7 @@ public class UserValidations {
     }
 
     public void isDuplicateIdentifier(String identifier) {
-        Boolean isDuplicated = userRepository.existsByIdentifierAndNotDeleted(identifier);
+        Boolean isDuplicated = userExistsRepository.existsByIdentifierAndNotDeleted(identifier);
         if (isDuplicated) {
             log.print("아이디 중복 오류 identifier={" + identifier + "}");
             throw new CustomException(ErrorCode.DUPLICATED_IDENTIFIER_ERROR);
@@ -44,7 +46,7 @@ public class UserValidations {
     }
 
     public void isDuplicateNickname(String nickname) {
-        Boolean isDuplicated = userRepository.existsByNicknameAndNotDeleted(nickname);
+        Boolean isDuplicated = userExistsRepository.existsByNicknameAndNotDeleted(nickname);
         if (isDuplicated) {
             log.print("닉네임 중복 오류 nickname={" + nickname + "}");
             throw new CustomException(ErrorCode.DUPLICATED_NICKNAME_ERROR);
@@ -52,7 +54,7 @@ public class UserValidations {
     }
 
     public void isDuplicatePhoneNum(String phoneNum) {
-        Boolean isDuplicated = userRepository.existsByPhoneNumAndNotDeleted(phoneNum);
+        Boolean isDuplicated = userExistsRepository.existsByPhoneNumAndNotDeleted(phoneNum);
         if (isDuplicated) {
             log.print("전화번호 중복 오류 email={" + phoneNum + "}");
             throw new CustomException(ErrorCode.DUPLICATED_PHONE_NUM_ERROR);
@@ -60,7 +62,7 @@ public class UserValidations {
     }
 
     public void isDuplicateEmail(String email) {
-        Boolean isDuplicated = userRepository.existsByEmailAndNotDeleted(email);
+        Boolean isDuplicated = userExistsRepository.existsByEmailAndNotDeleted(email);
         if (isDuplicated) {
             log.print("이메일 중복 오류 email={" + email + "}");
             throw new CustomException(ErrorCode.DUPLICATED_EMAIL_ERROR);
@@ -68,28 +70,28 @@ public class UserValidations {
     }
 
     public void isDuplicateIdentifierToUpdate(String identifier, User user) {
-        if (userRepository.existsByIdentifierAndNotDeleted(identifier) && !user.getIdentifier().equals(identifier)) {
+        if (userExistsRepository.existsByIdentifierAndNotDeleted(identifier) && !user.getIdentifier().equals(identifier)) {
             log.print("아이디 중복 오류 identifier={" + identifier + "}");
             throw new CustomException(ErrorCode.DUPLICATED_IDENTIFIER_ERROR);
         }
     }
 
     public void isDuplicateNicknameToUpdate(String nickname, User user) {
-        if (userRepository.existsByNicknameAndNotDeleted(nickname) && !user.getNickname().equals(nickname)) {
+        if (userExistsRepository.existsByNicknameAndNotDeleted(nickname) && !user.getNickname().equals(nickname)) {
             log.print("닉네임 중복 오류 nickname={" + nickname + "}");
             throw new CustomException(ErrorCode.DUPLICATED_NICKNAME_ERROR);
         }
     }
 
     public void isDuplicatePhoneNumToUpdate(String phoneNum, User user) {
-        if (userRepository.existsByPhoneNumAndNotDeleted(phoneNum) && !user.getPhoneNum().equals(phoneNum)) {
+        if (userExistsRepository.existsByPhoneNumAndNotDeleted(phoneNum) && !user.getPhoneNum().equals(phoneNum)) {
             log.print("전화번호 중복 오류 email={" + phoneNum + "}");
             throw new CustomException(ErrorCode.DUPLICATED_PHONE_NUM_ERROR);
         }
     }
 
     public void isDuplicateEmailToUpdate(String email, User user) {
-        if (userRepository.existsByEmailAndNotDeleted(email) && !user.getEmail().equals(email)) {
+        if (userExistsRepository.existsByEmailAndNotDeleted(email) && !user.getEmail().equals(email)) {
             log.print("이메일 중복 오류 email={" + email + "}");
             throw new CustomException(ErrorCode.DUPLICATED_EMAIL_ERROR);
         }

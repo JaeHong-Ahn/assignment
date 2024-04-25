@@ -2,6 +2,10 @@ package com.example.thecommerce.repository;
 
 import com.example.thecommerce.dto.*;
 import com.example.thecommerce.entity.User;
+import com.example.thecommerce.repository.interfaces.UserExistsRepository;
+import com.example.thecommerce.repository.interfaces.UserJpaRepository;
+import com.example.thecommerce.repository.interfaces.UserFindRepository;
+import com.example.thecommerce.repository.interfaces.UserSetRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -14,7 +18,7 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class UserRepositoryImpl implements UserRepository {
+public class UserFindRepositoryImpl implements UserFindRepository, UserSetRepository, UserExistsRepository {
 
     private final PasswordEncoder passwordEncoder;
     private final UserJpaRepository userJpaRepository;

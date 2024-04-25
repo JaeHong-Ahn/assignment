@@ -1,4 +1,4 @@
-package com.example.thecommerce.repository;
+package com.example.thecommerce.repository.interfaces;
 
 import com.example.thecommerce.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
