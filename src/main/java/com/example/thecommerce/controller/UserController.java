@@ -6,6 +6,7 @@ import com.example.thecommerce.entity.User;
 import com.example.thecommerce.exception.CustomException;
 import com.example.thecommerce.exception.ErrorCode;
 import com.example.thecommerce.service.UserService;
+import com.example.thecommerce.service.UserSetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +28,7 @@ import static com.example.thecommerce.util.DefaultHttpResponse.*;
 public class UserController {
 
     private final UserService userService;
+    private final UserSetService userSetService;
 
     /**
      * 회원 가입
@@ -40,21 +42,21 @@ public class UserController {
 
     //회원 가입
     @PostMapping("/join")
-    public ResponseEntity join(@Validated @RequestBody UserRegisterForm form,
+    public ResponseEntity<?> join(@Validated @RequestBody UserRegisterForm form,
                                                  BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()){
             return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
         }
 
-        userService.createUser(form);
+        userSetService.createUser(form);
 
         return CREATE_SUCCESS_RESPONSE;
     }
 
     //로그인
     @PostMapping("/login")
-    public ResponseEntity login(@Validated @RequestBody UserLoginForm form,
+    public ResponseEntity<?> login(@Validated @RequestBody UserLoginForm form,
                         BindingResult bindingResult, HttpServletResponse response) {
 
         if (bindingResult.hasErrors()){
@@ -74,14 +76,14 @@ public class UserController {
 
     //로그 아웃
     @PostMapping("/logout")
-    public ResponseEntity logout(HttpServletResponse response){
+    public ResponseEntity<?> logout(HttpServletResponse response){
         expireCookie(response, "userId");
         return OK_WITH_NO_DATA;
     }
 
     //회원 목록 조회
     @GetMapping("/list")
-    public ResponseEntity getUserList(@RequestParam(name = "pg", defaultValue = "0") Long page,
+    public ResponseEntity<?> getUserList(@RequestParam(name = "pg", defaultValue = "0") Long page,
                                                         @RequestParam(name = "ps", defaultValue = "10") Long pageSize,
                                                         @RequestParam(name = "option", defaultValue = "LATEST_JOIN") SortOption sortOption){
 
@@ -96,7 +98,7 @@ public class UserController {
 
     //회원 정보 수정
     @PostMapping("/{identifier}")
-    public ResponseEntity update(@Validated @RequestBody UserUpdateForm form,
+    public ResponseEntity<?> update(@Validated @RequestBody UserUpdateForm form,
                          @PathVariable String identifier, HttpServletRequest request,
                          BindingResult bindingResult){
 
@@ -104,30 +106,30 @@ public class UserController {
             return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
         }
 
-        return DEFAULT_SUCCESS_RESPONSE(userService.updateUserInfo(form, identifier, request));
+        return DEFAULT_SUCCESS_RESPONSE(userSetService.updateUserInfo(form, identifier, request));
     }
 
     //회원 비밀번호 수정
     @PostMapping("/password/{id}")
-    public ResponseEntity updatePassword(@Validated @RequestBody UserUpdatePasswordForm form,
+    public ResponseEntity<?> updatePassword(@Validated @RequestBody UserUpdatePasswordForm form,
                          @PathVariable Long id,
                          BindingResult bindingResult){
         if (bindingResult.hasErrors()){
             return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
         }
 
-        userService.updateUserPassword(id, form);
+        userSetService.updateUserPassword(id, form);
 
         return OK_WITH_NO_DATA;
     }
 
     //회원 탈퇴
     @PostMapping("/withdrawal")
-    public ResponseEntity withdrawal(HttpServletRequest request){
+    public ResponseEntity<?> withdrawal(HttpServletRequest request){
 
         Cookie cookie = request.getCookies()[0];
 
-        userService.withdrawal(Long.valueOf(cookie.getValue()));
+        userSetService.withdrawal(Long.valueOf(cookie.getValue()));
         return OK_WITH_NO_DATA;
     }
 
