@@ -30,28 +30,21 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public UserUpdateResponseDto updateUserInfo(UserUpdateForm userUpdateForm, String identifier) {
-        User findUser = userJpaRepository.findUserByIdentifier(identifier);
+    public User updateUserInfo(UserUpdateForm userUpdateForm, String identifier) {
 
-        findUser.setNickname(userUpdateForm.getNickname());
-        findUser.setName(userUpdateForm.getName());
-        findUser.setPhoneNum(userUpdateForm.getPhoneNum());
-        findUser.setEmail(userUpdateForm.getEmail());
+        User modifyingUser = userJpaRepository.findUserByIdentifier(identifier);
 
-        return UserUpdateResponseDto.toDto(findUser);
-    }
+        User modifiedUser = User.modifyUser(modifyingUser, userUpdateForm);
 
-    @Override
-    public UserUpdateIdentifierResponseDto updateUserIdentifier(Long id, UserUpdateIdentifierForm form) {
-        User findUser = userJpaRepository.findById(id).get();
-        findUser.setIdentifier(form.getIdentifier());
-        return UserUpdateIdentifierResponseDto.toDto(findUser);
+        return modifiedUser;
     }
 
     @Override
     public void updateUserPassword(Long id, UserUpdatePasswordForm form) {
-        User findUser = userJpaRepository.findById(id).get();
-        findUser.setPassword(passwordEncoder.encode(form.getPassword()));
+        User modifyingUser = userJpaRepository.findById(id).get();
+        String encodedPassword = passwordEncoder.encode(form.getPassword());
+
+        User.modifyUserPassword(modifyingUser, encodedPassword);
     }
 
     @Override

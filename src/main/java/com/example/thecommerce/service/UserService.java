@@ -34,8 +34,10 @@ public class UserService {
 
     @Transactional
     public UserUpdateResponseDto updateUserInfo(UserUpdateForm form, String identifier) {
+
         validateUpdate(form, identifier);
-        return userRepository.updateUserInfo(form, identifier);
+
+        return UserUpdateResponseDto.toDto(userRepository.updateUserInfo(form, identifier));
     }
 
     @Transactional
