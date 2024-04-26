@@ -5,8 +5,9 @@ version settings
 
 API 명세
 
-1. 회원 가입
+**1. 회원 가입**
 /api/user/join, PostMapping
+
 REQUEST
 - UserRegisterForm -> String identifier, String password,
 String nickname, String name, String phoneNum, Stringemail
@@ -16,8 +17,9 @@ String nickname, String name, String phoneNum, Stringemail
 RESPONSE
 - 회원 가입 성공 시 201 OK, 실패시 400 에러,
 
-2. 로그인
+**2. 로그인**
 /api/user/login, PostMapping
+
 REQEUST
 - UserLoginForm -> String identifier, String password
 - BindingResult
@@ -27,16 +29,18 @@ RESPONSE
 성공시 200 OK
 아이디, 비밀번호 불일치 -> 400 ERROR
 
-3. 로그 아웃
+**3. 로그 아웃**
 /api/user/logout, PostMapping
+
 REQUEST
-HttpServletResponse
+- HttpServletResponse
 
 RESPONSE
 성공 시 200OK
 
-4. 회원 목록 조회
+**4. 회원 목록 조회**
 /api/user/list, GetMapping
+
 REQUEST
 - Long page("pg"), Long pageSize("ps"), SortOption sortOption <- RequestParam
 - {"pg": 0, "ps": 10, "option": "LATEST_JOIN"} <- 디폴트
@@ -44,8 +48,9 @@ REQUEST
 RESPONSE
 조건에 맞는 형식의 유저 리스트 페이지
 
-5. 회원 정보 수정
+**5. 회원 정보 수정**
 /api/user/{identifier}, PostMapping
+
 REQUEST
 - UserUpdateForm -> String identifier, String nickname, String phoneNum,
 String name, String email
@@ -57,8 +62,9 @@ RESPONSE
 - UserUpdateResponseDto -> String identifier, String nickname,
 String phoneNum, String name, String email
 
-6. 회원 비밀번호 수정
+**6. 회원 비밀번호 수정**
 api/user/password/{id}, PostMapping
+
 REQUEST
 - UserUpdatePasswordForm -> String password, String checkPassword
 - id -> @PathVariable
@@ -68,7 +74,7 @@ RESPONSE
 성공 시 200 OK with No Data
 
 
-7. 회원 탈퇴
+**7. 회원 탈퇴**
 api/user/withdrawal, PostMapping
 
 REQUEST
