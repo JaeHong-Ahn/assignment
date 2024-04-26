@@ -1,5 +1,6 @@
 package com.example.thecommerce.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -11,6 +12,7 @@ import javax.validation.constraints.Pattern;
 @Getter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 public class UserUpdateForm {
 
     @NotBlank(message = "변경하실 아이디를 입력해주세요.")

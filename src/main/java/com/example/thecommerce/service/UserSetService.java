@@ -48,6 +48,7 @@ public class UserSetService {
 
     //회원 비밀번호 변경
     public void updateUserPassword(Long id, UserUpdatePasswordForm form) {
+        System.out.println("test1");
         validations.validatePasswordUpdateForm(form);
         userSetRepository.updateUserPassword(id, form);
     }
