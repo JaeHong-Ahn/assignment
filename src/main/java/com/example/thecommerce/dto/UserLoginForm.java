@@ -16,9 +16,4 @@ public class UserLoginForm {
 
     @NotBlank(message = "비밀번호를 입력해주세요.")
     String password;
-
-    public UserLoginForm(String identifier, String password) {
-        this.identifier = identifier;
-        this.password = password;
-    }
 }

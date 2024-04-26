@@ -1,5 +1,6 @@
 package com.example.thecommerce.entity;
 
+import com.example.thecommerce.dto.UserUpdateForm;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.stereotype.Component;
@@ -41,5 +42,26 @@ public class User extends BaseTimeEntity{
 
     @Column(name = "email", nullable = false)
     private String email;
+
+    @Builder.Default
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
+
+    public static User modifyUser(User user, UserUpdateForm form){
+        user.setIdentifier(form.getIdentifier());
+        user.setNickname(form.getNickname());
+        user.setName(form.getName());
+        user.setPhoneNum(form.getPhoneNum());
+        user.setEmail(form.getEmail());
+        return user;
+    }
+
+    public static void modifyUserPassword(User user, String password){
+        user.setPassword(password);
+    }
+
+    public static void toDelete(User user){
+        user.setIsDeleted(true);
+    }
 
 }

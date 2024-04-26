@@ -2,6 +2,10 @@ package com.example.thecommerce.repository;
 
 import com.example.thecommerce.dto.*;
 import com.example.thecommerce.entity.User;
+import com.example.thecommerce.repository.interfaces.UserExistsRepository;
+import com.example.thecommerce.repository.interfaces.UserJpaRepository;
+import com.example.thecommerce.repository.interfaces.UserFindRepository;
+import com.example.thecommerce.repository.interfaces.UserSetRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -14,50 +18,37 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class UserRepositoryImpl implements UserRepository {
+public class UserRepositoryImpl implements UserFindRepository, UserSetRepository, UserExistsRepository {
 
     private final PasswordEncoder passwordEncoder;
     private final UserJpaRepository userJpaRepository;
 
     @Override
-    public void create(UserRegisterForm userRegisterForm) {
-        userJpaRepository.save(UserRegisterForm.toUser(passwordEncoder, userRegisterForm));
-        System.out.println(userRegisterForm.getNickname());
+    public User create(User user) {
+        return userJpaRepository.save(user);
     }
 
     @Override
     public Page<User> findAllUsers(Pageable pageable) {
-        return userJpaRepository.findAll(pageable);
+        return userJpaRepository.findAllByIsDeleted(pageable, false);
     }
 
     @Override
-    public UserUpdateResponseDto updateUserInfo(String identifier, UserUpdateForm userUpdateForm) {
-        User findUser = userJpaRepository.findUserByIdentifier(identifier);
+    public User updateUserInfo(UserUpdateForm userUpdateForm, String identifier) {
 
-        findUser.setNickname(userUpdateForm.getNickname());
-        findUser.setName(userUpdateForm.getName());
-        findUser.setPhoneNum(userUpdateForm.getPhoneNum());
-        findUser.setEmail(userUpdateForm.getEmail());
+        User modifyingUser = userJpaRepository.findUserByIdentifier(identifier);
 
-        return UserUpdateResponseDto.toDto(findUser);
-    }
+        User modifiedUser = User.modifyUser(modifyingUser, userUpdateForm);
 
-    @Override
-    public UserUpdateIdentifierResponseDto updateUserIdentifier(Long id, UserUpdateIdentifierForm form) {
-        User findUser = userJpaRepository.findById(id).get();
-        findUser.setIdentifier(form.getIdentifier());
-        return UserUpdateIdentifierResponseDto.toDto(findUser);
+        return modifiedUser;
     }
 
     @Override
     public void updateUserPassword(Long id, UserUpdatePasswordForm form) {
-        User findUser = userJpaRepository.findById(id).get();
-        findUser.setPassword(passwordEncoder.encode(form.getPassword()));
-    }
+        User modifyingUser = userJpaRepository.findById(id).get();
+        String encodedPassword = passwordEncoder.encode(form.getPassword());
 
-    @Override
-    public void delete(Long id) {
-        userJpaRepository.deleteById(id);
+        User.modifyUserPassword(modifyingUser, encodedPassword);
     }
 
     @Override
@@ -68,32 +59,32 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Boolean existsByIdentifier(String identifier) {
-        return userJpaRepository.existsUserByIdentifier(identifier);
+    public User findUserById(Long id) {
+        return userJpaRepository.findUserById(id);
     }
 
     @Override
-    public Boolean existsByIdentifierToUpdate(String identifier, Long id) {
-
-        if (userJpaRepository.findById(id).get().getIdentifier().equals(identifier)){
-            return false;
-        }
-
-        return userJpaRepository.existsUserByIdentifier(identifier);
+    public Boolean existsByIdentifierAndNotDeleted(String identifier) {
+        return userJpaRepository.existsUserByIdentifier_AndIsDeleted(identifier, false);
     }
 
     @Override
-    public Boolean existsByNickname(String nickname) {
-        return userJpaRepository.existsUserByNickname(nickname);
+    public Boolean existsByNicknameAndNotDeleted(String nickname) {
+        return userJpaRepository.existsUserByNickname_AndIsDeleted(nickname, false);
     }
 
     @Override
-    public Boolean existsByPhoneNum(String phoneNum) {
-        return userJpaRepository.existsUserByPhoneNum(phoneNum);
+    public Boolean existsByPhoneNumAndNotDeleted(String phoneNum) {
+        return userJpaRepository.existsUserByPhoneNum_AndIsDeleted(phoneNum, false);
     }
 
     @Override
-    public Boolean existsByEmail(String email) {
-        return userJpaRepository.existsUserByEmail(email);
+    public Boolean existsByEmailAndNotDeleted(String email) {
+        return userJpaRepository.existsUserByEmail_AndIsDeleted(email, false);
+    }
+
+    @Override
+    public User findUserByIdentifier(String identifier) {
+        return userJpaRepository.findUserByIdentifier(identifier);
     }
 }

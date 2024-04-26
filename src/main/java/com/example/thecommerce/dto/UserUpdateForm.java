@@ -1,5 +1,6 @@
 package com.example.thecommerce.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -11,7 +12,13 @@ import javax.validation.constraints.Pattern;
 @Getter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 public class UserUpdateForm {
+
+    @NotBlank(message = "변경하실 아이디를 입력해주세요.")
+    @Pattern(regexp = "^[A-Za-z0-9]{6,18}$",
+            message = "아이디는 숫자, 문자 포함의 6~18자 이내로 작성해주세요.")
+    String identifier;
 
     @NotBlank(message = "닉네임을 입력해주세요.")
     @Pattern(regexp = "^[가-힣]{1,8}$", message = "닉네임은 한글 8자 이내로 입력해주세요.")
@@ -26,12 +33,4 @@ public class UserUpdateForm {
     @NotBlank(message = "이메일을 입력해주세요.")
     @Email(message = "올바른 이메일 형식이 아닙니다.")
     String email;
-
-    public UserUpdateForm(String nickname, String name,
-                          String phoneNum, String email) {
-        this.nickname = nickname;
-        this.name = name;
-        this.phoneNum = phoneNum;
-        this.email = email;
-    }
 }

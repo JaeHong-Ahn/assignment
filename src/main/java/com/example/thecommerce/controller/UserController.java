@@ -6,12 +6,11 @@ import com.example.thecommerce.entity.User;
 import com.example.thecommerce.exception.CustomException;
 import com.example.thecommerce.exception.ErrorCode;
 import com.example.thecommerce.service.UserService;
+import com.example.thecommerce.service.UserSetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -22,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static com.example.thecommerce.util.DefaultHttpResponse.*;
-import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,6 +28,7 @@ import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 public class UserController {
 
     private final UserService userService;
+    private final UserSetService userSetService;
 
     /**
      * 회원 가입
@@ -37,32 +36,27 @@ public class UserController {
      * 로그아웃
      * 회원 목록 조회
      * 회원 정보 수정
-     * 회원 아이디
      * 회원 비밀번호 수정
      * 회원 탈퇴
-     * 닉네임 중복 확인
-     * identifier 중복 확인
      */
 
     //회원 가입
     @PostMapping("/join")
-    public ResponseEntity<? extends Object> join(@Validated @RequestBody UserRegisterForm form,
+    public ResponseEntity<?> join(@Validated @RequestBody UserRegisterForm form,
                                                  BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()){
             return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
         }
 
-        validateRegisterForm(form);
-
-        userService.createUser(form);
+        userSetService.createUser(form);
 
         return CREATE_SUCCESS_RESPONSE;
     }
 
     //로그인
     @PostMapping("/login")
-    public ResponseEntity<? extends Object> login(@Validated @RequestBody UserLoginForm form,
+    public ResponseEntity<?> login(@Validated @RequestBody UserLoginForm form,
                         BindingResult bindingResult, HttpServletResponse response) {
 
         if (bindingResult.hasErrors()){
@@ -75,90 +69,67 @@ public class UserController {
             return DEFAULT_ERROR_RESPONSE("아이디 또는 비밀번호가 일치하지 않습니다.");
         }
 
-        Cookie idCookie = new Cookie("userId", String.valueOf(loginUser.getId()));
-        //세션 쿠키 사용
-        response.addCookie(idCookie);
+        setCookie(response, loginUser);
 
         return OK_WITH_NO_DATA;
     }
 
     //로그 아웃
     @PostMapping("/logout")
-    public ResponseEntity<? extends Object> logout(HttpServletResponse response){
-        Cookie cookie = new Cookie("userId", null);
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
+    public ResponseEntity<?> logout(HttpServletResponse response){
+        expireCookie(response, "userId");
         return OK_WITH_NO_DATA;
     }
 
     //회원 목록 조회
     @GetMapping("/list")
-    public ResponseEntity<? extends Object> getUserList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                                                        @RequestParam(name = "pg", defaultValue = "0") Long page,
+    public ResponseEntity<?> getUserList(@RequestParam(name = "pg", defaultValue = "0") Long page,
                                                         @RequestParam(name = "ps", defaultValue = "10") Long pageSize,
                                                         @RequestParam(name = "option", defaultValue = "LATEST_JOIN") SortOption sortOption){
 
         Sort sort = getSort(sortOption);
 
-        pageable = PageRequest.of(page.intValue(), pageSize.intValue(), sort);
+        PageRequest pageRequest = PageRequest.of(page.intValue(), pageSize.intValue(), sort);
 
-        Page<User> usersListPage = userService.findAllUsers(pageable);
+        Page<User> usersListPage = userService.findAllUsers(pageRequest);
 
         return DEFAULT_SUCCESS_RESPONSE(usersListPage);
     }
 
     //회원 정보 수정
     @PostMapping("/{identifier}")
-    public ResponseEntity<? extends Object> update(@Validated @RequestBody UserUpdateForm form,
-                         @PathVariable String identifier,
+    public ResponseEntity<?> update(@Validated @RequestBody UserUpdateForm form,
+                         @PathVariable String identifier, HttpServletRequest request,
                          BindingResult bindingResult){
+
         if (bindingResult.hasErrors()){
             return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
         }
 
-        validateUpdateForm(form);
-
-        UserUpdateResponseDto dto = userService.updateUserInfo(identifier, form);
-        return DEFAULT_SUCCESS_RESPONSE(dto);
-    }
-
-    //회원 Identifier 수정
-    @PostMapping("/update/identifier/{id}")
-    public ResponseEntity<? extends Object> updateIdentifier(@Validated @RequestBody UserUpdateIdentifierForm form,
-                         @PathVariable Long id, BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
-            return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
-        }
-
-        validateIdentifierUpdateForm(form, id);
-
-        UserUpdateIdentifierResponseDto dto = userService.updateUserIdentifier(id, form);
-
-        return DEFAULT_SUCCESS_RESPONSE(dto);
+        return DEFAULT_SUCCESS_RESPONSE(userSetService.updateUserInfo(form, identifier, request));
     }
 
     //회원 비밀번호 수정
-    @PostMapping("/update/password/{id}")
-    public ResponseEntity<? extends Object>  updatePassword(@Validated @RequestBody UserUpdatePasswordForm form,
+    @PostMapping("/password/{id}")
+    public ResponseEntity<?> updatePassword(@Validated @RequestBody UserUpdatePasswordForm form,
                          @PathVariable Long id,
                          BindingResult bindingResult){
         if (bindingResult.hasErrors()){
             return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
         }
 
-        validatePasswordUpdateForm(form);
+        userSetService.updateUserPassword(id, form);
 
-        userService.updateUserPassword(id, form);
         return OK_WITH_NO_DATA;
     }
 
     //회원 탈퇴
     @PostMapping("/withdrawal")
-    public ResponseEntity<? extends Object> withdrawal(HttpServletRequest request){
+    public ResponseEntity<?> withdrawal(HttpServletRequest request){
 
         Cookie cookie = request.getCookies()[0];
 
-        userService.withdrawal(Long.valueOf(cookie.getValue()));
+        userSetService.withdrawal(Long.valueOf(cookie.getValue()));
         return OK_WITH_NO_DATA;
     }
 
@@ -184,55 +155,14 @@ public class UserController {
         return sort;
     }
 
-    private void validateRegisterForm(UserRegisterForm form) {
-
-        if (userService.isDuplicateIdentifier(form.getIdentifier())) {
-            log.print("아이디 중복 오류 identifier={" + form.getIdentifier() + "}");
-            throw new CustomException(ErrorCode.DUPLICATED_IDENTIFIER_ERROR);
-        }
-        if (userService.isDuplicateNickname(form.getNickname())) {
-            log.print("닉네임 중복 오류 nickname={" + form.getNickname() + "}");
-            throw new CustomException(ErrorCode.DUPLICATED_NICKNAME_ERROR);
-        }
-        if (userService.isDuplicateEmail(form.getEmail())) {
-            log.print("이메일 중복 오류 email={" + form.getEmail() + "}");
-            throw new CustomException(ErrorCode.DUPLICATED_EMAIL_ERROR);
-        }
-        if (userService.isDuplicatePhoneNum(form.getPhoneNum())) {
-            log.print("전화번호 중복 오류 email={" + form.getPhoneNum() + "}");
-            throw new CustomException(ErrorCode.DUPLICATED_PHONE_NUM_ERROR);
-        }
+    private static void setCookie(HttpServletResponse response, User loginUser) {
+        Cookie idCookie = new Cookie("userId", String.valueOf(loginUser.getId()));
+        response.addCookie(idCookie);
     }
 
-    private void validateUpdateForm(UserUpdateForm form) {
-
-        if (userService.isDuplicateNickname(form.getNickname())) {
-            log.print("닉네임 중복 오류 nickname={" + form.getNickname() + "}");
-            throw new CustomException(ErrorCode.DUPLICATED_NICKNAME_ERROR);
-        }
-        if (userService.isDuplicateEmail(form.getEmail())) {
-            log.print("이메일 중복 오류 email={" + form.getEmail() + "}");
-            throw new CustomException(ErrorCode.DUPLICATED_EMAIL_ERROR);
-        }
-        if (userService.isDuplicatePhoneNum(form.getPhoneNum())) {
-            log.print("전화번호 중복 오류 email={" + form.getPhoneNum() + "}");
-            throw new CustomException(ErrorCode.DUPLICATED_PHONE_NUM_ERROR);
-        }
-    }
-
-    private void validateIdentifierUpdateForm(UserUpdateIdentifierForm form, Long id) {
-
-        if (userService.isDuplicateIdentifierToUpdate(form.getIdentifier(), id)) {
-            log.print("아이디 중복 오류 identifier={" + form.getIdentifier() + "}");
-            throw new CustomException(ErrorCode.DUPLICATED_IDENTIFIER_ERROR);
-        }
-    }
-
-    private void validatePasswordUpdateForm(UserUpdatePasswordForm form) {
-
-        if (!form.getPassword().equals(form.getCheckPassword())) {
-            log.print("비밀번호 불일치={"+ form.getPassword() +"},{" + form.getCheckPassword() + "}");
-            throw new CustomException(ErrorCode.DIFFERENT_PASSWORD_ERROR);
-        }
+    private void expireCookie(HttpServletResponse response, String cookieName) {
+        Cookie cookie = new Cookie(cookieName, null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
     }
 }
