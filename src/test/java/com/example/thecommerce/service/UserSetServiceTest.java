@@ -5,6 +5,7 @@ import com.example.thecommerce.dto.UserUpdateForm;
 import com.example.thecommerce.dto.UserUpdatePasswordForm;
 import com.example.thecommerce.dto.UserUpdateResponseDto;
 import com.example.thecommerce.entity.User;
+import com.example.thecommerce.exception.CustomException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ class UserSetServiceTest {
     private UserSetService userSetService;
 
     UserRegisterForm userRegisterForm1 = new UserRegisterForm("woghd387","rkwhr387@","재홍브로", "안재홍", "01025865555", "woghd387@naver.com");
+    UserRegisterForm userRegisterForm2 = new UserRegisterForm("woghd387","rkwhr3872@","재홍브로2", "안재홍", "01025865552", "woghd3872@naver.com");
+    UserRegisterForm userRegisterForm3 = new UserRegisterForm("woghd3872","rkwhr3872@","재홍브로2", "안재홍", "01025865552", "woghd3872@naver.com");
 
     UserUpdateForm userUpdateForm = new UserUpdateForm("woghd3872", "재홍맨", "안재홍", "01025555555", "woghd387@thecommerce.com");
 
@@ -40,6 +43,18 @@ class UserSetServiceTest {
 
         // then
         assertTrue(saved.getIdentifier().equals(userRegisterForm1.getIdentifier()));
+    }
+
+    @Test
+    @DisplayName("회원가입_실패")
+    void createUser_fail() {
+        // given
+        User saved = userSetService.createUser(userRegisterForm1);
+
+        // when & then
+        assertThrows(CustomException.class, () -> {
+            userSetService.createUser(userRegisterForm2);
+        });
     }
 
     @Test
@@ -57,6 +72,20 @@ class UserSetServiceTest {
         assertEquals("안재홍", dto.getName());
         assertEquals("01025555555", dto.getPhoneNum());
         assertEquals("woghd387@thecommerce.com", dto.getEmail());
+
+    }
+
+    @Test
+    @DisplayName("회원정보변경_실패")
+    void updateUserInfo_fail() {
+        // given
+        User saved = userSetService.createUser(userRegisterForm1);
+        User identifierDuplicatedUser = userSetService.createUser(userRegisterForm3);
+
+        //when & then
+        assertThrows(CustomException.class, () -> {
+            userSetService.updateUserInfo(userUpdateForm, saved.getIdentifier(), saved.getId());
+        });
 
     }
 
