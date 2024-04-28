@@ -3,6 +3,7 @@ package com.example.thecommerce.dto;
 import com.example.thecommerce.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 @Getter
+@Setter
 @ToString
 @NoArgsConstructor
 public class UserRegisterForm {
@@ -49,10 +51,10 @@ public class UserRegisterForm {
         this.email = email;
     }
 
-    public static User toUser(PasswordEncoder passwordEncoder, UserRegisterForm userRegisterForm) {
+    public static User toUser(UserRegisterForm userRegisterForm) {
         return User.builder()
                 .identifier(userRegisterForm.getIdentifier())
-                .password(passwordEncoder.encode(userRegisterForm.getPassword()))
+                .password(userRegisterForm.getPassword())
                 .nickname(userRegisterForm.getNickname())
                 .name(userRegisterForm.getName())
                 .phoneNum(userRegisterForm.getPhoneNum())

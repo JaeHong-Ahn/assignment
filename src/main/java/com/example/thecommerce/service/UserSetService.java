@@ -24,17 +24,19 @@ public class UserSetService {
     private final UserValidations validations;
 
     //회원 가입
-    public void createUser(UserRegisterForm form) {
+    public User createUser(UserRegisterForm form) {
         validations.validateJoin(form);
-        User saved = userSetRepository.create(UserRegisterForm.toUser(passwordEncoder, form));
+        form.setPassword(passwordEncoder.encode(form.getPassword()));
+        User saved = userSetRepository.create(UserRegisterForm.toUser(form));
         if (saved == null) {
             throw new CustomException(ErrorCode.FAILED_TO_SIGN_UP);
         }
+        return saved;
     }
 
     //회원 정보 수정
-    public UserUpdateResponseDto updateUserInfo(UserUpdateForm form, String identifier, HttpServletRequest request) {
-        User modifyingUser = userFindRepository.findUserById(Long.valueOf(request.getCookies()[0].getValue()));
+    public UserUpdateResponseDto updateUserInfo(UserUpdateForm form, String identifier, Long id) {
+        User modifyingUser = userFindRepository.findUserById(id);
         User targetuser = userFindRepository.findUserByIdentifier(identifier);
         
         if (modifyingUser.equals(targetuser)) {
@@ -48,7 +50,6 @@ public class UserSetService {
 
     //회원 비밀번호 변경
     public void updateUserPassword(Long id, UserUpdatePasswordForm form) {
-        System.out.println("test1");
         validations.validatePasswordUpdateForm(form);
         userSetRepository.updateUserPassword(id, form);
     }

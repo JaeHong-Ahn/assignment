@@ -106,7 +106,8 @@ public class UserController {
             return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
         }
 
-        return DEFAULT_SUCCESS_RESPONSE(userSetService.updateUserInfo(form, identifier, request));
+        return DEFAULT_SUCCESS_RESPONSE(
+                userSetService.updateUserInfo(form, identifier, Long.valueOf(request.getCookies()[0].getValue())));
     }
 
     //회원 비밀번호 수정
