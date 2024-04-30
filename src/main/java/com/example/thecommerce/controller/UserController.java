@@ -7,6 +7,7 @@ import com.example.thecommerce.exception.CustomException;
 import com.example.thecommerce.exception.ErrorCode;
 import com.example.thecommerce.service.UserService;
 import com.example.thecommerce.service.UserSetService;
+import com.example.thecommerce.util.SessionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import static com.example.thecommerce.util.DefaultHttpResponse.*;
 
@@ -57,7 +59,7 @@ public class UserController {
     //로그인
     @PostMapping("/login")
     public ResponseEntity<?> login(@Validated @RequestBody UserLoginForm form,
-                        BindingResult bindingResult, HttpServletResponse response) {
+                                   BindingResult bindingResult, HttpServletRequest request, HttpServletResponse response) {
 
         if (bindingResult.hasErrors()){
             return DEFAULT_BINDING_ERROR_RESPONSE(bindingResult);
@@ -69,6 +71,13 @@ public class UserController {
             return DEFAULT_ERROR_RESPONSE("아이디 또는 비밀번호가 일치하지 않습니다.");
         }
 
+        validationForIsDeletedUser(request);
+
+        // 세션에 사용자 정보 저장
+        HttpSession session = request.getSession();
+        session.setAttribute("user", loginUser);
+
+        // 쿠키 설정
         setCookie(response, loginUser);
 
         return OK_WITH_NO_DATA;
@@ -76,16 +85,25 @@ public class UserController {
 
     //로그 아웃
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletResponse response){
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response){
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+
         expireCookie(response, "userId");
+
         return OK_WITH_NO_DATA;
     }
 
     //회원 목록 조회
     @GetMapping("/list")
-    public ResponseEntity<?> getUserList(@RequestParam(name = "pg", defaultValue = "0") Long page,
-                                                        @RequestParam(name = "ps", defaultValue = "10") Long pageSize,
-                                                        @RequestParam(name = "option", defaultValue = "LATEST_JOIN") SortOption sortOption){
+    public ResponseEntity<?> getUserList(HttpSession session,
+                                         @RequestParam(name = "pg", defaultValue = "0") Long page,
+                                         @RequestParam(name = "ps", defaultValue = "10") Long pageSize,
+                                         @RequestParam(name = "option", defaultValue = "LATEST_JOIN") SortOption sortOption){
+
+        SessionUtil.validateSession(session);
 
         Sort sort = getSort(sortOption);
 
@@ -165,5 +183,11 @@ public class UserController {
         Cookie cookie = new Cookie(cookieName, null);
         cookie.setMaxAge(0);
         response.addCookie(cookie);
+    }
+
+    private void validationForIsDeletedUser(HttpServletRequest request) {
+        if (userService.findUserById(Long.valueOf(request.getCookies()[0].getValue())).getIsDeleted()){
+            throw new CustomException(ErrorCode.NOT_AVAILABLE_USER);
+        }
     }
 }

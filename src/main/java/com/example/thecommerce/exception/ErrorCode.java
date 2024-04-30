@@ -24,7 +24,9 @@ public enum ErrorCode {
     WRONG_ACCESS(BAD_REQUEST, "잘못된 접근입니다."),
 
     /* 403 FORBIDDEN : 인증 X */
-    NOT_AUTHENTICATED(FORBIDDEN, "접근 권한이 없습니다.");
+    NOT_AUTHENTICATED(FORBIDDEN, "접근 권한이 없습니다."),
+    NOT_AUTHENTICATED_SESSION(FORBIDDEN, "유효하지 않은 세션입니다."),
+    NOT_AVAILABLE_USER(FORBIDDEN, "유효하지 않은 유저 입니다.");
 
 
     private final HttpStatus status;

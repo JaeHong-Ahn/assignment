@@ -29,4 +29,8 @@ public class UserService {
     public Page<User> findAllUsers(Pageable pageable) {
         return userFindRepository.findAllUsers(pageable);
     }
+
+    public User findUserById(Long id) {
+        userFindRepository.findUserById(id);
+    }
 }
